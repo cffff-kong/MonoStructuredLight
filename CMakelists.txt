@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.21)
+
+project(MonoStructuredLight
+    LANGUAGES CXX CSharp
+)
+set(CMAKE_CXX_STANDARD 20)
+
+set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(CMake/Setting.cmake)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if(NOT CMAKE_GENERATOR_PLATFORM)
+    set(CMAKE_GENERATOR_PLATFORM "x64")
+endif()
+
+set(CMAKE_DEBUG_POSTFIX "d")
+set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
+
+include(CMake/Function.cmake)
+
+# # Set conan_toolchain.cmake for third_party path
+# include(${PROJECT_ROOT_DIR}/build/conan/conan_toolchain.cmake)
+# include(${PROJECT_ROOT_DIR}/cmake/OrbbecSDKConfig.cmake)
+# include(${PROJECT_ROOT_DIR}/cmake/dlibConfig.cmake)
+# 设置运行时输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Set export directory for CMake config.
+set(CMAKE_INSTALL_BINARY_DIR "bin/")
+set(CMAKE_INSTALL_LIBRARY_DIR "lib/")
+set(CMAKE_INSTALL_INCLUDE_DIR "include/")
+set(CMAKE_INSTALL_EXPORT_DIR "cmake/")
+
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 4 CACHE INTERNAL "No dev warnings")
+endif()
+
+include_directories(${PROJECT_ROOT_DIR})
+
+add_subdirectory(CLayer/CameraOperation)

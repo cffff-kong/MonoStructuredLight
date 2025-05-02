@@ -1,0 +1,45 @@
+set(TARGET_NAME CameraOperation)
+
+# 配置资源文件
+add_library(${TARGET_NAME} SHARED)
+
+file(GLOB CURRENT_DIR_HEADERS "*.h")
+file(GLOB CURRENT_DIR_SRCS "*.cpp")
+target_sources(${TARGET_NAME} PRIVATE
+    ${CURRENT_DIR_HEADERS}
+    ${CURRENT_DIR_SRCS}
+)
+
+# Opencv
+set(OpenCV_DIR "D:/opencv4.7/opencv/build/x64/vc16/lib") #OpenCVConfig路径
+find_package(OpenCV REQUIRED)
+target_include_directories(${TARGET_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+
+target_include_directories(${TARGET_NAME}
+    PUBLIC
+    $<INSTALL_INTERFACE:include>
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
+
+set_windows_md_flag(${TARGET_NAME})
+
+# 声明该模块要被导出发布
+set_property(TARGET ${TARGET_NAME} PROPERTY "TARGET_EXPORTED" TRUE)
+
+# 执行基本的install 动作
+export_and_install_target(${TARGET_NAME})
+
+# # 整理install 头文件目录结构
+# install(FILES ${CURRENT_DIR_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDE_DIR}/${TARGET_NAME})
+
+# # 将该模块依赖的外部包以find_package声明形式写入自己的Config中
+# list(APPEND DEP_PKGS  BCV2DLib BCV3DLib)
+# include(CMakePackageConfigHelpers)
+# configure_package_config_file(
+#     "${PROJECT_ROOT_DIR}/cmake/FaceScanLaserEngraveModule.cmake.in"
+#     "${CMAKE_BINARY_DIR}/${TARGET_NAME}Config.cmake"
+#     INSTALL_DESTINATION "cmake"
+# )
+# unset(DEP_PKGS)
+# install(FILES "${CMAKE_BINARY_DIR}/${TARGET_NAME}Config.cmake" DESTINATION "cmake")
