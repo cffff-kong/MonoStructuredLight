@@ -23,7 +23,7 @@ set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
 include(CMake/Function.cmake)
 
 # # Set conan_toolchain.cmake for third_party path
-# include(${PROJECT_ROOT_DIR}/build/conan/conan_toolchain.cmake)
+include(${PROJECT_ROOT_DIR}/CMake/DahengSDKConfig.cmake)
 # include(${PROJECT_ROOT_DIR}/cmake/OrbbecSDKConfig.cmake)
 # include(${PROJECT_ROOT_DIR}/cmake/dlibConfig.cmake)
 # 设置运行时输出目录

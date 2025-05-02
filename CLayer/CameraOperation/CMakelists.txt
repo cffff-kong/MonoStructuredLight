@@ -21,7 +21,10 @@ target_include_directories(${TARGET_NAME}
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
-
+#daheng
+target_link_libraries(${TARGET_NAME} PUBLIC 
+DahengSDK
+)
 set_windows_md_flag(${TARGET_NAME})
 
 # 声明该模块要被导出发布
