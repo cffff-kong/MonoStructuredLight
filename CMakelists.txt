@@ -35,3 +35,6 @@ endif()
 include_directories(${PROJECT_ROOT_DIR})
 
 add_subdirectory(CLayer/CameraOperation)
+add_subdirectory(CLRLayer/ClrImport)
+add_subdirectory(MSLGUI)
+
