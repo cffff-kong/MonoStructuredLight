@@ -2,6 +2,7 @@
 
 CameraOperation::CameraOperation()
 {
+    m_daheng = new DahengSDK();
 }
 
 CameraOperation::~CameraOperation()
@@ -10,7 +11,6 @@ CameraOperation::~CameraOperation()
 
 bool CameraOperation::Img2Opencv(CImageDataPointer &pImageData, cv::Mat &img)
 {
-    std::cout << pImageData->GetHeight() << std::endl;
     img = cv::Mat(pImageData->GetHeight(), pImageData->GetWidth(), CV_8UC3);
     void *pRGB24Buffer = NULL;
     // 假设原始数据是BayerRG8图像
@@ -23,4 +23,74 @@ bool CameraOperation::Img2Opencv(CImageDataPointer &pImageData, cv::Mat &img)
         return true;
     }
     return false;
+}
+
+bool CameraOperation::OpenCamera()
+{
+    if (!m_is_open)
+    {
+		m_daheng->InitCamera();
+		if (m_daheng->vectorDeviceInfo.size() == 0)
+		{
+			std::cout << "No camera found" << std::endl;
+			return false;
+		}
+		m_daheng->OpenCamera();
+		if (m_daheng->objDevicePtr == NULL)
+		{
+			std::cout << "Open camera failed" << std::endl;
+			return false;
+		}
+		m_daheng->OpenStream();
+		if (m_daheng->objStreamPtr == NULL)
+		{
+			std::cout << "Open stream failed" << std::endl;
+			return false;
+		}
+		std::cout << "Open camera success" << std::endl;
+		m_is_open = true;
+    }
+    return true;
+}
+
+bool CameraOperation::CloseCamera()
+{
+	if (m_is_open)
+	{
+		m_daheng->CloseCamera();
+		m_daheng->vectorDeviceInfo.clear();
+		m_is_open=false;
+		m_is_grabbing = false;
+		std::cout << "Close camera success" << std::endl;
+	}
+
+    return true;
+}
+
+bool CameraOperation::StartGrabbing()
+{
+	if (m_is_open)
+	{
+		m_daheng->StartGrab();
+		m_is_grabbing=true;
+	}
+	return true;
+}
+
+bool CameraOperation::GetImage(cv::Mat& img)
+{
+	if (m_is_grabbing&& m_is_open)
+	{
+		CImageDataPointer objImageDataPtr;
+		objImageDataPtr = m_daheng->GetImage();
+		if (objImageDataPtr != NULL)
+		{
+			if (Img2Opencv(objImageDataPtr, img))
+			{
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }

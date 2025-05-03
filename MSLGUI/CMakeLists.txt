@@ -87,7 +87,8 @@ set_windows_md_flag(${TARGET_NAME})
 
 # 设置C#项目的pdb文件生成，便于调试
 set(CMAKE_CSharp_FLAGS_RELEASE "/debug:pdbonly")
-#resolve_executable_dependencies(${TARGET_NAME})
+
+resolve_executable_dependencies(${TARGET_NAME})
 
 
 # # 声明该模块要被导出发布

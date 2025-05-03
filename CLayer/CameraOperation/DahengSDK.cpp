@@ -11,12 +11,23 @@ DahengSDK::~DahengSDK()
 
 void DahengSDK::InitCamera()
 {
-    // 枚举设备
-    IGXFactory::GetInstance().UpdateDeviceList(1000, vectorDeviceInfo);
-    for (uint32_t i = 0; i < vectorDeviceInfo.size(); i++)
+    try
     {
-        std::cout << vectorDeviceInfo[i].GetVendorName() << std::endl;
-        std::cout << vectorDeviceInfo[i].GetModelName() << std::endl;
+        // 枚举设备
+        IGXFactory::GetInstance().UpdateDeviceList(1000, vectorDeviceInfo);
+        for (uint32_t i = 0; i < vectorDeviceInfo.size(); i++)
+        {
+            std::cout << vectorDeviceInfo[i].GetVendorName() << std::endl;
+            std::cout << vectorDeviceInfo[i].GetModelName() << std::endl;
+        }
+    }
+    catch (CGalaxyException& e)
+    {
+       std::cout << e.what() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
     }
 }
 
@@ -30,7 +41,6 @@ void DahengSDK::OpenCamera()
         GxIAPICPP::gxstring strMAC = vectorDeviceInfo[0].GetMAC();
         GxIAPICPP::gxstring strIP = vectorDeviceInfo[0].GetIP();
         objDevicePtr = IGXFactory::GetInstance().OpenDeviceBySN(vectorDeviceInfo[0].GetSN(), GX_ACCESS_EXCLUSIVE);
-
     }
     else
     {

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include"GalaxyIncludes.h" 
+#include "GalaxyIncludes.h"
 
 class DahengSDK
 {
@@ -22,7 +22,7 @@ public:
 	/// @brief 开始采图
 	void StartGrab();
 
-	/// @brief 获取图像 
+	/// @brief 获取图像
 	/// @return 图像指针
 	CImageDataPointer GetImage();
 
@@ -33,20 +33,20 @@ public:
 	void CloseCamera();
 
 	/// @brief 设置曝光时间
-	/// @param time 
+	/// @param time
 	void SetExposureTime(int time);
-	
+
 	/// @brief 设置外触发模式
 	void SetExTriggerMode();
 
 	/// @brief 设置内触发模式
 	void SetInTriggerMode();
-private:
+
+public:
 	GxIAPICPP::gxdeviceinfo_vector vectorDeviceInfo;
 	CGXDevicePointer objDevicePtr;
-	CGXStreamPointer objStreamPtr;//流指针
-	CGXFeatureControlPointer objFeatureControlPtr;//（远端）设备属性控制器指针
-	CGXFeatureControlPointer objStreamFeatureControlPtr;//流属性控制器指针
-
+	CGXStreamPointer objStreamPtr; // 流指针
+private:
+	CGXFeatureControlPointer objFeatureControlPtr;		 // （远端）设备属性控制器指针
+	CGXFeatureControlPointer objStreamFeatureControlPtr; // 流属性控制器指针
 };
-

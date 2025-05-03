@@ -1,9 +1,100 @@
 #include "MSLCLR.h"
 
-MSLCLR::MSLCLR()
+mslclrimpoort::MSLCLR::MSLCLR()
+{
+    m_camera_operation=new CameraOperation();
+}
+
+mslclrimpoort::MSLCLR::~MSLCLR()
 {
 }
 
-MSLCLR::~MSLCLR()
+void mslclrimpoort::MSLCLR::OpenCameraCLR()
 {
+    m_camera_operation->OpenCamera();
+}
+
+void mslclrimpoort::MSLCLR::CloseCameraCLR()
+{
+    m_camera_operation->CloseCamera();
+}
+
+void mslclrimpoort::MSLCLR::StartGrabbingCLR()
+{
+    m_camera_operation->StartGrabbing();
+}
+System::Drawing::Bitmap^ mslclrimpoort::MSLCLR::CVMat2Bitmap(cv::Mat cv_image)
+{
+    int imgW = cv_image.cols;
+    int imgH = cv_image.rows;
+    int channel = cv_image.channels();
+    System::Drawing::Imaging::PixelFormat pixelFormat;
+    System::Drawing::Bitmap^ resultimage = nullptr;
+
+    if (channel == 1)
+    {
+        pixelFormat = System::Drawing::Imaging::PixelFormat::Format8bppIndexed;
+        resultimage = gcnew System::Drawing::Bitmap(imgW, imgH, pixelFormat);
+
+        //    ûҶȵ ɫ  
+        System::Drawing::Imaging::ColorPalette^ palette = resultimage->Palette;
+        for (int i = 0; i < 256; i++)
+        {
+            palette->Entries[i] = System::Drawing::Color::FromArgb(i, i, i);
+        }
+        resultimage->Palette = palette;
+    }
+    else if (channel == 3)
+    {
+        pixelFormat = System::Drawing::Imaging::PixelFormat::Format24bppRgb;
+        resultimage = gcnew System::Drawing::Bitmap(imgW, imgH, pixelFormat);
+    }
+    else if (channel == 4)
+    {
+        pixelFormat = System::Drawing::Imaging::PixelFormat::Format32bppArgb;
+        resultimage = gcnew System::Drawing::Bitmap(imgW, imgH, pixelFormat);
+    }
+    else
+    {
+        std::cout << "Unsupported channel number!" << std::endl;
+        return nullptr;
+    }
+
+    System::Drawing::Imaging::BitmapData^ resultimageData = resultimage->LockBits(
+        System::Drawing::Rectangle(0, 0, imgW, imgH),
+        System::Drawing::Imaging::ImageLockMode::ReadWrite,
+        pixelFormat);
+
+    int stride = resultimageData->Stride;
+    uchar* outputData = (uchar*)(void*)resultimageData->Scan0;
+    uchar* img = cv_image.data;
+
+    for (int r = 0; r < imgH; r++)
+    {
+        memcpy(outputData + r * stride, img + r * cv_image.step, imgW * channel);
+    }
+
+    resultimage->UnlockBits(resultimageData);
+
+    return resultimage;
+}
+System::Drawing::Bitmap^ mslclrimpoort::MSLCLR::GetImageCLR()
+{
+	cv::Mat image;
+    bool success = m_camera_operation->GetImage(image);
+
+    if (!success)  // 直接检查抓取是否成功
+    {
+        System::Diagnostics::Debug::WriteLine("GrabImage failed!");
+        return gcnew System::Drawing::Bitmap(1, 1);  // 返回一个最小的有效位图
+    }
+    System::Drawing::Bitmap^ out_image = CVMat2Bitmap(image);
+    if (out_image == nullptr)  // 检查转换结果
+    {
+        System::Diagnostics::Debug::WriteLine("CVMat2Bitmap failed!");
+        return gcnew System::Drawing::Bitmap(1, 1);
+    }
+
+    return out_image;
+
 }

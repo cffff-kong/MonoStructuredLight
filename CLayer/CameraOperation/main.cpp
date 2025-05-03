@@ -2,8 +2,17 @@
 
 int main()
 {
-    cv::Mat img =cv::imread("C:\\Users\\DC Kong\\Desktop\\e24809bd330bce7429a74c16cc08f9d.png");
-    cv::imshow("test",img);
-    cv::waitKey(0);
+   CameraOperation cameraOperation;
+   cameraOperation.OpenCamera();
+   cameraOperation.StartGrabbing();
+   cv::Mat image;
+   while (1)
+   {
+       cameraOperation.GetImage(image);
+       cv::namedWindow("camera", cv::WINDOW_NORMAL);
+       cv::imshow("camera", image);
+       cv::waitKey(1);
+
+   }
     return 0;
 }
