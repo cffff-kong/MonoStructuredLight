@@ -1,25 +1,26 @@
 #include <opencv2/opencv.hpp>
-#include <GalaxyIncludes.h>
+#include "DahengSDK.h"
 
-class CameraOperation
+#ifdef CAMERAOPERATION_EXPORTS
+#define CAMERAOPERATION_API __declspec(dllexport)
+#else
+#define CAMERAOPERATION_API __declspec(dllimport)
+#endif
+
+class CAMERAOPERATION_API CameraOperation
 {
 public:
     CameraOperation();
     ~CameraOperation();
-    void OpenCamera();
 
 private:
-    IDeviceOfflineEventHandler *pDeviceOfflineEventHandler = NULL; // 掉线事件回调对象
-    GX_DEVICE_OFFLINE_CALLBACK_HANDLE hDeviceOffline = NULL;       // 注册设备掉线
-    IFeatureEventHandler *pFeatureEventHandler = NULL;             //<远端设备事件回调对象
-    ICaptureEventHandler *pCaptureEventHandler = NULL;             //<采集回调对象
-    CGXDevicePointer ObjDevicePtr;                                 // 设备指针
-    CGXStreamPointer ObjStreamPtr;                                 // 流指针
-    CGXFeatureControlPointer objStreamFeatureControlPtr;           // 流属性控制器指针
-    CGXFeatureControlPointer ObjFeatureControlPtr;                 // （远端）设备属性控制器指针
-    int txt_exposeTime;         // 曝光时间
-    double txt_gain;            // 增益
-   
+    /// @brief 转换图像格式为cv::Mat
+    /// @param pImageData 图像数据指针
+    /// @param img cv::Mat类型图像
+    /// @return 
+    bool Img2Opencv(CImageDataPointer &pImageData, cv::Mat &img);
+
+private:
     bool m_bIsOpen = false; // 打开设备标识
     bool m_bIsSnap = false; // 采集图像标识
     bool triggerMode = false;
