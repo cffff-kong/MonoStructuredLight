@@ -24,6 +24,7 @@ include(CMake/Function.cmake)
 
 # 第三方库的config.cmake  文件
 include(${PROJECT_ROOT_DIR}/CMake/DahengSDKConfig.cmake)
+include(${PROJECT_ROOT_DIR}/CMake/DLP4500SDKConfig.cmake)
 
 # 设置运行时输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -35,6 +36,7 @@ endif()
 include_directories(${PROJECT_ROOT_DIR})
 
 add_subdirectory(CLayer/CameraOperation)
+add_subdirectory(CLayer/DLPOperation)
 add_subdirectory(CLRLayer/ClrImport)
 add_subdirectory(MSLGUI)
 

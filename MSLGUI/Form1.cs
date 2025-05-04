@@ -27,25 +27,42 @@ namespace MSLGUI
             trackBarExposure.Maximum = 1000000;
             trackBarExposure.TickFrequency = 10;
             trackBarExposure.SmallChange = 100;    // 鼠标箭头点击或键盘方向键移动步长
-
+            // 轮询投影仪是否已经连接
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    mslclr.ChechDLPIsConnectCLR();
+                    Thread.Sleep(2000);
+                }
+            });
         }
-
+            
+        /// <summary>
+        /// 打开相机按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnOpenCamera_Click(object sender, EventArgs e)
         {
             mslclr.OpenCameraCLR();
         }
 
+        /// <summary>
+        /// 关闭相机按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             Interlocked.Exchange(ref g_is_preview_real_time_diaply, 0);
             Thread.Sleep(100);
             mslclr.CloseCameraCLR();
         }
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
 
-        }
-
+        /// <summary>
+        /// 预览实时显示线程
+        /// </summary>
         public void PreViewRealTimeDisplay()
         {
             //等待is_preview_real_time_diaply为1，超时则退出
@@ -86,6 +103,12 @@ namespace MSLGUI
 
             }
         }
+
+        /// <summary>
+        /// 开始预览实时显示按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             mslclr.StartGrabbingCLR();
@@ -97,6 +120,11 @@ namespace MSLGUI
             thread.Start();
         }
 
+        /// <summary>
+        /// 设置曝光
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void trackBarExposure_Scroll(object sender, EventArgs e)
         {
             mslclr.SetExposureCLR(trackBarExposure.Value);
@@ -104,7 +132,7 @@ namespace MSLGUI
         }
 
         /// <summary>
-        /// 关闭窗体时，释放相机资源
+        /// 关闭窗体事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -114,5 +142,10 @@ namespace MSLGUI
             Thread.Sleep(100);
             mslclr.CloseCameraCLR();
         }
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
+
 }

@@ -3,6 +3,7 @@
 mslclrimpoort::MSLCLR::MSLCLR()
 {
     m_camera_operation=new CameraOperation();
+    m_dlp_operation=new DLPOperation();
 }
 
 mslclrimpoort::MSLCLR::~MSLCLR()
@@ -102,4 +103,9 @@ System::Drawing::Bitmap^ mslclrimpoort::MSLCLR::GetImageCLR()
 void mslclrimpoort::MSLCLR::SetExposureCLR(int exposure)
 {
     m_camera_operation->SetExposureTime(exposure);
+}
+
+void mslclrimpoort::MSLCLR::ChechDLPIsConnectCLR()
+{
+    m_dlp_operation->CheckDLPIsConnect();
 }

@@ -28,6 +28,7 @@ target_include_directories(${TARGET_NAME}
 target_link_libraries(${TARGET_NAME} PUBLIC 
 ${OpenCV_LIBS}
 CameraOperation
+DLPOperation
 )
 set_windows_md_flag(${TARGET_NAME})
 

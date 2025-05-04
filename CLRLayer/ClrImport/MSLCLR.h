@@ -3,6 +3,7 @@
 #include <vcclr.h>
 #include <opencv2/opencv.hpp>
 #include "CLayer/CameraOperation/CameraOperation.h"
+#include "CLayer/DLPOperation/DLPOperation.h"
 #using <System.Drawing.dll>
 using namespace System;
 namespace mslclrimpoort
@@ -23,10 +24,13 @@ namespace mslclrimpoort
 		/// @brief 
 		/// @param exposure 
 		void SetExposureCLR(int exposure);
+
+		void ChechDLPIsConnectCLR();
 	private:
 		System::Drawing::Bitmap^ CVMat2Bitmap(cv::Mat cv_image);
 
 	private:
 		CameraOperation* m_camera_operation = nullptr;
+		DLPOperation* m_dlp_operation = nullptr;
 	};
 }
