@@ -25,20 +25,28 @@ bool CameraOperation::Img2Opencv(CImageDataPointer &pImageData, cv::Mat &img)
     return false;
 }
 
-void CameraOperation::SavePatterns(cv::Mat &img)
+void CameraOperation::SavePatterns(cv::Mat& img)
 {
-	// 获取当前时间
+	// 获取当前时间（精确到毫秒）
 	auto now = std::chrono::system_clock::now();
-	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+	auto now_time_t = std::chrono::system_clock::to_time_t(now);
+	auto duration_since_epoch = now.time_since_epoch();
+	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count() % 1000;
 
-	// 将当前时间转换为 tm 结构
-	std::tm tm_now = *std::localtime(&now_time);
+	// 转换为 tm 结构
+	std::tm tm_now = *std::localtime(&now_time_t);
 
-	// 使用 stringstream 格式化时间字符串
+	// 格式化时间字符串（精确到毫秒）
 	std::ostringstream oss;
-    // 保存图像
-    cv::imwrite(oss.str()+"pattern.png", img);
+	oss << std::put_time(&tm_now, "%Y%m%d_%H%M%S") << std::setw(3) << std::setfill('0') << millis << "_";
+
+	// 打印路径
+	std::cout << "Save image to " << oss.str() << "pattern.png" << std::endl;
+
+	// 保存图像
+	cv::imwrite("./save/"+oss.str() + "pattern.png", img);
 }
+
 
 bool CameraOperation::OpenCamera()
 {
@@ -87,7 +95,8 @@ bool CameraOperation::StartGrabbing()
 	if (m_is_open)
 	{
 		m_daheng->StartGrab();
-		m_is_grabbing=true;
+		m_is_grabbing = true;
+		SetInTriggerMode(); // 设置触发模式
 	}
 	return true;
 }
@@ -102,14 +111,16 @@ bool CameraOperation::GetImage(cv::Mat& img)
 		{
 			if (Img2Opencv(objImageDataPtr, img))
 			{
+				if (m_is_ex.load())
+				{
+					std::cout << "11111111111111" << std::endl;
+					SavePatterns(img);
+				}
 				return true;
 			}
 		}
 	}
-	if (m_is_ex.load())
-	{
-		SavePatterns(img);
-	}
+	
 	return false;
 }
 
@@ -135,5 +146,6 @@ void CameraOperation::SetInTriggerMode()
 	if (m_is_grabbing && m_is_open)
 	{
 		m_daheng->SetInTriggerMode();
+		m_is_ex.store(false);
 	}
 }

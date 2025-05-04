@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <thread>
+#include <future>
 #include "dlpc350_common.h"
 #include "DLP4500/src/dlpc350_firmware.h"
 #include "dlpc350_error.h"

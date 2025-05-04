@@ -23,10 +23,10 @@ namespace MSLGUI
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;//设置图大小显示模式，可使图像适应pictureBoxCamShow大小，并保持横纵比
-            trackBarExposure.Minimum = 8400;
+            trackBarExposure.Minimum = 9000;
             trackBarExposure.Maximum = 1000000;
-            trackBarExposure.TickFrequency = 10;
-            trackBarExposure.SmallChange = 100;    // 鼠标箭头点击或键盘方向键移动步长
+            trackBarExposure.TickFrequency = 1000;
+            trackBarExposure.SmallChange = 1000;    // 鼠标箭头点击或键盘方向键移动步长
             mslclr.SendCamera2DLPCLR(); //传递指针
             // 轮询投影仪是否已经连接
             Task.Run(() =>
@@ -140,8 +140,38 @@ namespace MSLGUI
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Interlocked.Exchange(ref g_is_preview_real_time_diaply, 0);
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
             mslclr.CloseCameraCLR();
+        }
+     
+        /// <summary>
+        /// 开始投影按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnStartProjection_Click(object sender, EventArgs e)
+        {
+            int exposure_time = trackBarExposure.Value;
+            int projection_period;
+            if (exposure_time < 130000)
+            {
+                projection_period = 200000;
+            }
+            else
+            {
+                projection_period = exposure_time;
+            }
+            mslclr.StartProjectionCLR(comboBoxProjectionType.SelectedIndex, exposure_time, projection_period);
+        }
+
+        /// <summary>
+        /// 停止投影按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnStopProjection_Click(object sender, EventArgs e)
+        {
+            mslclr.StopProjectionCLR();
         }
         private void tabPage1_Click(object sender, EventArgs e)
         {
@@ -151,31 +181,6 @@ namespace MSLGUI
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void btnStartProjection_Click(object sender, EventArgs e)
-        {
-            Interlocked.Exchange(ref g_is_preview_real_time_diaply, 0);
-            Thread.Sleep(100);
-            int exposure_time = trackBarExposure.Value;
-            int projection_period;
-            if(exposure_time< 130000)
-            {
-                projection_period = 200000;
-            }
-            else
-            {
-                projection_period = exposure_time;
-            }
-            mslclr.StartProjectionCLR(comboBoxProjectionType.SelectedIndex, exposure_time, projection_period);
-            Thread.Sleep(100);
-            Interlocked.Exchange(ref g_is_preview_real_time_diaply, 1);
-            button2_Click(this, EventArgs.Empty);
-        }
-
-        private void btnStopProjection_Click(object sender, EventArgs e)
-        {
-            mslclr.StopProjectionCLR();
         }
     }
 
