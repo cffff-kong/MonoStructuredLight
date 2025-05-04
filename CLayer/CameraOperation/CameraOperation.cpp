@@ -25,6 +25,21 @@ bool CameraOperation::Img2Opencv(CImageDataPointer &pImageData, cv::Mat &img)
     return false;
 }
 
+void CameraOperation::SavePatterns(cv::Mat &img)
+{
+	// 获取当前时间
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+
+	// 将当前时间转换为 tm 结构
+	std::tm tm_now = *std::localtime(&now_time);
+
+	// 使用 stringstream 格式化时间字符串
+	std::ostringstream oss;
+    // 保存图像
+    cv::imwrite(oss.str()+"pattern.png", img);
+}
+
 bool CameraOperation::OpenCamera()
 {
     if (!m_is_open)
@@ -91,7 +106,10 @@ bool CameraOperation::GetImage(cv::Mat& img)
 			}
 		}
 	}
-	
+	if (m_is_ex.load())
+	{
+		SavePatterns(img);
+	}
 	return false;
 }
 
@@ -100,5 +118,22 @@ void CameraOperation::SetExposureTime(int time)
 	if (m_is_grabbing && m_is_open)
 	{
 		m_daheng->SetExposureTime(time);
+	}
+}
+
+void CameraOperation::SetExTriggerMode()
+{
+	if (m_is_grabbing && m_is_open)
+	{
+		m_daheng->SetExTriggerMode();
+		m_is_ex.store(true);
+	}
+}
+
+void CameraOperation::SetInTriggerMode()
+{
+	if (m_is_grabbing && m_is_open)
+	{
+		m_daheng->SetInTriggerMode();
 	}
 }

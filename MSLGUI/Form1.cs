@@ -27,12 +27,13 @@ namespace MSLGUI
             trackBarExposure.Maximum = 1000000;
             trackBarExposure.TickFrequency = 10;
             trackBarExposure.SmallChange = 100;    // 鼠标箭头点击或键盘方向键移动步长
+            mslclr.SendCamera2DLPCLR(); //传递指针
             // 轮询投影仪是否已经连接
             Task.Run(() =>
             {
                 while (true)
                 {
-                    mslclr.ChechDLPIsConnectCLR();
+                    mslclr.CheckDLPIsConnectCLR();
                     Thread.Sleep(2000);
                 }
             });
@@ -109,7 +110,7 @@ namespace MSLGUI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
+        public void button2_Click(object sender, EventArgs e)
         {
             mslclr.StartGrabbingCLR();
             // 使用 Interlocked 设置 g_is_displaying 的值
@@ -145,6 +146,36 @@ namespace MSLGUI
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnStartProjection_Click(object sender, EventArgs e)
+        {
+            Interlocked.Exchange(ref g_is_preview_real_time_diaply, 0);
+            Thread.Sleep(100);
+            int exposure_time = trackBarExposure.Value;
+            int projection_period;
+            if(exposure_time< 130000)
+            {
+                projection_period = 200000;
+            }
+            else
+            {
+                projection_period = exposure_time;
+            }
+            mslclr.StartProjectionCLR(comboBoxProjectionType.SelectedIndex, exposure_time, projection_period);
+            Thread.Sleep(100);
+            Interlocked.Exchange(ref g_is_preview_real_time_diaply, 1);
+            button2_Click(this, EventArgs.Empty);
+        }
+
+        private void btnStopProjection_Click(object sender, EventArgs e)
+        {
+            mslclr.StopProjectionCLR();
         }
     }
 

@@ -105,7 +105,22 @@ void mslclrimpoort::MSLCLR::SetExposureCLR(int exposure)
     m_camera_operation->SetExposureTime(exposure);
 }
 
-void mslclrimpoort::MSLCLR::ChechDLPIsConnectCLR()
+void mslclrimpoort::MSLCLR::CheckDLPIsConnectCLR()
 {
     m_dlp_operation->CheckDLPIsConnect();
+}
+
+void mslclrimpoort::MSLCLR::SendCamera2DLPCLR()
+{
+    m_dlp_operation->m_camera_operation = m_camera_operation;
+}
+
+void mslclrimpoort::MSLCLR::StartProjectionCLR(int type, int exposure_time, int project_period)
+{
+    m_dlp_operation->StartProjection(type, exposure_time, project_period);
+}
+
+void mslclrimpoort::MSLCLR::StopProjectionCLR()
+{
+    m_dlp_operation->StopProjection();
 }

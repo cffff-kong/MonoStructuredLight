@@ -31,6 +31,10 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnStopProjection = new System.Windows.Forms.Button();
+            this.btnStartProjection = new System.Windows.Forms.Button();
+            this.comboBoxProjectionType = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.trackBarExposure = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,7 +43,6 @@
             this.btnOpenCamera = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label3 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -60,7 +63,7 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1284, 879);
+            this.tabControl1.Size = new System.Drawing.Size(1256, 862);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -72,7 +75,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1276, 846);
+            this.tabPage1.Size = new System.Drawing.Size(1248, 829);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "扫描";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -82,6 +85,9 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.btnStopProjection);
+            this.groupBox1.Controls.Add(this.btnStartProjection);
+            this.groupBox1.Controls.Add(this.comboBoxProjectionType);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.trackBarExposure);
@@ -90,12 +96,57 @@
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.btnOpenCamera);
             this.groupBox1.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.groupBox1.Location = new System.Drawing.Point(921, 3);
+            this.groupBox1.Location = new System.Drawing.Point(893, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(352, 824);
+            this.groupBox1.Size = new System.Drawing.Size(352, 807);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "控制部分";
+            // 
+            // btnStopProjection
+            // 
+            this.btnStopProjection.Font = new System.Drawing.Font("宋体", 9F);
+            this.btnStopProjection.Location = new System.Drawing.Point(196, 389);
+            this.btnStopProjection.Name = "btnStopProjection";
+            this.btnStopProjection.Size = new System.Drawing.Size(120, 48);
+            this.btnStopProjection.TabIndex = 9;
+            this.btnStopProjection.Text = "停止投影";
+            this.btnStopProjection.UseVisualStyleBackColor = true;
+            this.btnStopProjection.Click += new System.EventHandler(this.btnStopProjection_Click);
+            // 
+            // btnStartProjection
+            // 
+            this.btnStartProjection.Font = new System.Drawing.Font("宋体", 9F);
+            this.btnStartProjection.Location = new System.Drawing.Point(46, 389);
+            this.btnStartProjection.Name = "btnStartProjection";
+            this.btnStartProjection.Size = new System.Drawing.Size(120, 48);
+            this.btnStartProjection.TabIndex = 8;
+            this.btnStartProjection.Text = "开始投影";
+            this.btnStartProjection.UseVisualStyleBackColor = true;
+            this.btnStartProjection.Click += new System.EventHandler(this.btnStartProjection_Click);
+            // 
+            // comboBoxProjectionType
+            // 
+            this.comboBoxProjectionType.Font = new System.Drawing.Font("微软雅黑", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBoxProjectionType.FormattingEnabled = true;
+            this.comboBoxProjectionType.Items.AddRange(new object[] {
+            "扫描模式",
+            "全白图案",
+            "静态条纹"});
+            this.comboBoxProjectionType.Location = new System.Drawing.Point(24, 307);
+            this.comboBoxProjectionType.Name = "comboBoxProjectionType";
+            this.comboBoxProjectionType.Size = new System.Drawing.Size(142, 27);
+            this.comboBoxProjectionType.TabIndex = 7;
+            this.comboBoxProjectionType.Text = "投影类型";
+            this.comboBoxProjectionType.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(145, 177);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(0, 19);
+            this.label3.TabIndex = 6;
             // 
             // label2
             // 
@@ -116,7 +167,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(61, 358);
+            this.label1.Location = new System.Drawing.Point(58, 609);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(179, 64);
             this.label1.TabIndex = 3;
@@ -125,7 +176,7 @@
             // btnStartGrabbing
             // 
             this.btnStartGrabbing.Font = new System.Drawing.Font("宋体", 9F);
-            this.btnStartGrabbing.Location = new System.Drawing.Point(132, 48);
+            this.btnStartGrabbing.Location = new System.Drawing.Point(186, 50);
             this.btnStartGrabbing.Name = "btnStartGrabbing";
             this.btnStartGrabbing.Size = new System.Drawing.Size(120, 48);
             this.btnStartGrabbing.TabIndex = 2;
@@ -136,10 +187,10 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button1.Location = new System.Drawing.Point(6, 104);
+            this.button1.Location = new System.Drawing.Point(46, 114);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 44);
+            this.button1.Size = new System.Drawing.Size(120, 44);
             this.button1.TabIndex = 1;
             this.button1.Text = "关闭相机";
             this.button1.UseVisualStyleBackColor = true;
@@ -148,7 +199,7 @@
             // btnOpenCamera
             // 
             this.btnOpenCamera.Font = new System.Drawing.Font("宋体", 9F);
-            this.btnOpenCamera.Location = new System.Drawing.Point(6, 48);
+            this.btnOpenCamera.Location = new System.Drawing.Point(46, 50);
             this.btnOpenCamera.Name = "btnOpenCamera";
             this.btnOpenCamera.Size = new System.Drawing.Size(120, 48);
             this.btnOpenCamera.TabIndex = 0;
@@ -163,7 +214,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(912, 525);
+            this.pictureBox1.Size = new System.Drawing.Size(884, 508);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -173,24 +224,16 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(1276, 846);
+            this.tabPage2.Size = new System.Drawing.Size(1248, 829);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "待定";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(145, 177);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(0, 19);
-            this.label3.TabIndex = 6;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1281, 878);
+            this.ClientSize = new System.Drawing.Size(1253, 861);
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
@@ -220,6 +263,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TrackBar trackBarExposure;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox comboBoxProjectionType;
+        private System.Windows.Forms.Button btnStopProjection;
+        private System.Windows.Forms.Button btnStartProjection;
     }
 }
 
