@@ -19,6 +19,10 @@ namespace mslclrimpoort
 		void StartGrabbingCLR();
 
 		System::Drawing::Bitmap^ GetImageCLR();
+
+		/// @brief 
+		/// @param exposure 
+		void SetExposureCLR(int exposure);
 	private:
 		System::Drawing::Bitmap^ CVMat2Bitmap(cv::Mat cv_image);
 

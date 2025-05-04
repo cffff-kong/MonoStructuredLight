@@ -94,3 +94,11 @@ bool CameraOperation::GetImage(cv::Mat& img)
 	
 	return false;
 }
+
+void CameraOperation::SetExposureTime(int time)
+{
+	if (m_is_grabbing && m_is_open)
+	{
+		m_daheng->SetExposureTime(time);
+	}
+}

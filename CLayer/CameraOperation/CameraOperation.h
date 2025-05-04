@@ -24,6 +24,8 @@ public:
     bool StartGrabbing();
     bool GetImage(cv::Mat&);
 
+    void SetExposureTime(int time);
+
 private:
     /// @brief 转换图像格式为cv::Mat
     /// @param pImageData 图像数据指针

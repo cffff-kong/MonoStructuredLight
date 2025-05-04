@@ -98,3 +98,8 @@ System::Drawing::Bitmap^ mslclrimpoort::MSLCLR::GetImageCLR()
     return out_image;
 
 }
+
+void mslclrimpoort::MSLCLR::SetExposureCLR(int exposure)
+{
+    m_camera_operation->SetExposureTime(exposure);
+}
