@@ -19,14 +19,17 @@ namespace MSLGUI
     {
         private MSLCLR mslclr = new MSLCLR();
         int g_is_preview_real_time_diaply = 0;
+        int g_exposure_value;
+
         public Form1()
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;//设置图大小显示模式，可使图像适应pictureBoxCamShow大小，并保持横纵比
-            trackBarExposure.Minimum = 9000;
-            trackBarExposure.Maximum = 1000000;
-            trackBarExposure.TickFrequency = 1000;
-            trackBarExposure.SmallChange = 1000;    // 鼠标箭头点击或键盘方向键移动步长
+            trackBarExposure.Minimum = 0;
+            trackBarExposure.Maximum = (1000000 - 9000) / 1000;  // == 991
+            trackBarExposure.TickFrequency = 1;
+            trackBarExposure.SmallChange = 1;
+            trackBarExposure.LargeChange = 1;
             mslclr.SendCamera2DLPCLR(); //传递指针
             // 轮询投影仪是否已经连接
             Task.Run(() =>
@@ -128,8 +131,9 @@ namespace MSLGUI
         /// <param name="e"></param>
         private void trackBarExposure_Scroll(object sender, EventArgs e)
         {
-            mslclr.SetExposureCLR(trackBarExposure.Value);
-            label3.Text =  trackBarExposure.Value.ToString() + "us";
+            g_exposure_value = 9000 + trackBarExposure.Value * 1000;
+            mslclr.SetExposureCLR(g_exposure_value);
+            label3.Text = g_exposure_value.ToString() + "us";
         }
 
         /// <summary>
@@ -151,7 +155,7 @@ namespace MSLGUI
         /// <param name="e"></param>
         private void btnStartProjection_Click(object sender, EventArgs e)
         {
-            int exposure_time = trackBarExposure.Value;
+            int exposure_time = g_exposure_value;
             int projection_period;
             if (exposure_time < 130000)
             {

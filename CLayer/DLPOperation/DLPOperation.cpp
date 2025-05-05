@@ -21,6 +21,7 @@ void DLPOperation::CheckDLPIsConnect()
 		// 打开投影仪 返回0代表打开成功
 		if (DLPC350_USB_Open() == 0)
 		{
+			std::cout << "DLP is connected" << std::endl;
 		}
 	}
 }
@@ -183,7 +184,7 @@ void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
 		}
 		else
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 
 		if (i++ > 5)
