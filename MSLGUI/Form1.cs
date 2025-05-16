@@ -157,9 +157,9 @@ namespace MSLGUI
         {
             int exposure_time = g_exposure_value;
             int projection_period;
-            if (exposure_time < 130000)
+            if (exposure_time < 500000)
             {
-                projection_period = 200000;
+                projection_period = 500000;
             }
             else
             {

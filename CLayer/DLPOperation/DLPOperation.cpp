@@ -153,12 +153,126 @@ void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
 	{
 		return;
 	}
-	unsigned char splashLut[64];
+	unsigned char splashLut[4];
 	for (int i = 0; i < 4; i++)		// 12/3 = 4 每个图24位，我的一图案8位
 	{
 		splashLut[i] = i;
 	}
 	if (DLPC350_SendImageLut(&splashLut[0], 12) < 0)
+	{
+		return;
+	}
+	/************************开始投影**********************************/
+	std::cout << "---------------------------------start to pro----------" << std::endl;
+
+	if (DLPC350_StartPatLutValidate() < 0)
+	{
+		return;
+	}
+	int i = 0;
+	unsigned int status;
+	bool ready;
+	// 等待LUT校验通过的轮询
+	do
+	{
+		if (DLPC350_CheckPatLutValidate(&ready, &status) < 0)
+		{
+			return;
+		}
+
+		if (ready)
+		{
+			break;
+		}
+		else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		}
+
+		if (i++ > 5)
+			break;
+	} while (1);
+
+	if (status != 0)
+	{
+		return;
+	}
+
+	if ((status & BIT0) == BIT0)
+	{
+		return;
+	}
+	if ((status & BIT1) == BIT1)
+	{
+		return;
+	}
+	if ((status & BIT2) == BIT2)
+	{
+		return;
+	}
+	if ((status & BIT3) == BIT3)
+	{
+		return;
+	}
+	if ((status & BIT4) == BIT4)
+	{
+		return;
+	}
+
+	m_camera_operation->SetExTriggerMode();
+	if (DLPC350_PatternDisplay(2) < 0)
+	{
+		return;
+	}
+	delayedCall(15 * project_period / 1000, [this]() {
+		std::cout << "done" << std::endl;
+		m_camera_operation->SetInTriggerMode();
+		});
+	std::cout << "over projection" << std::endl;
+}
+
+void DLPOperation::ProjectWhite(int exposure_time, int project_period)
+{
+	DLPC350_ClearPatLut();
+	StopProjection();
+	// 写入LUT
+
+	if (DLPC350_AddToPatLut(0, 24, 1, 7, 1, 0, 1, 0) < 0)
+	{
+		std::cout << "error Updating LUT" << std::endl;
+		return;
+	}
+
+	// 检查是否勾选sequence
+	if (DLPC350_SetPatternDisplayMode(0) < 0)
+	{
+		std::cout << "error set from flash" << std::endl;
+		return;
+	}
+	int numPatterns = 1;
+	//int DLPC350_SetPatternConfig(unsigned int numLutEntries, bool repeat, unsigned int numPatsForTrigOut2, unsigned int numImages)
+	if (DLPC350_SetPatternConfig(numPatterns, true, numPatterns, numPatterns) < 0)
+	{
+		return;
+	}
+	// 设置曝光时间和投影周期
+	if (DLPC350_SetExposure_FramePeriod(130000, 130000) < 0)
+	{
+		return;
+	}
+	//触发模式 - 0(External) or 1(internal)
+	if (DLPC350_SetPatternTriggerMode(1) < 0)
+	{
+		return;
+	}
+	//Send Pattern LUT
+	if (DLPC350_SendPatLut() < 0)
+	{
+		return;
+	}
+	unsigned char splashLut[1];
+	splashLut[0] = 0;
+	if (DLPC350_SendImageLut(&splashLut[0], 1) < 0)
 	{
 		return;
 	}
@@ -216,119 +330,6 @@ void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
 	{
 		return;
 	}
-	
-	m_camera_operation->SetExTriggerMode();
-	if (DLPC350_PatternDisplay(2) < 0)
-	{
-		return;
-	}
-	delayedCall(15 * project_period / 1000, [this]() {
-		std::cout << "done" << std::endl;
-		m_camera_operation->SetInTriggerMode();
-		});
-	std::cout << "over projection" << std::endl;
-}
-
-void DLPOperation::ProjectWhite(int exposure_time, int project_period)
-{
-	DLPC350_ClearPatLut();
-	StopProjection();
-	// 写入LUT
-	for (int i = 0; i < 4; i++)
-	{
-		if (DLPC350_AddToPatLut(0, 24, 1, 7, 1, 0, 1, 0) < 0)
-		{
-			std::cout << "error Updating LUT" << std::endl;
-			return;
-		}
-	}
-	// 检查是否勾选sequence
-	if (DLPC350_SetPatternDisplayMode(0) < 0)
-	{
-		std::cout << "error set from flash" << std::endl;
-		return;
-	}
-	int numPatterns = 1;
-	//int DLPC350_SetPatternConfig(unsigned int numLutEntries, bool repeat, unsigned int numPatsForTrigOut2, unsigned int numImages)
-	if (DLPC350_SetPatternConfig(numPatterns, true, numPatterns, 1) < 0)
-	{
-		return;
-	}
-	// 设置曝光时间和投影周期
-	if (DLPC350_SetExposure_FramePeriod(exposure_time, project_period) < 0)
-	{
-		return;
-	}
-	//触发模式 - 0(External) or 1(internal)
-	if (DLPC350_SetPatternTriggerMode(1) < 0)
-	{
-		return;
-	}
-	//Send Pattern LUT
-	if (DLPC350_SendPatLut() < 0)
-	{
-		return;
-	}
-	unsigned char splashLut[1];
-	splashLut[0] = 0;
-	if (DLPC350_SendImageLut(&splashLut[0], 1) < 0)
-	{
-		return;
-	}
-	/************************开始投影**********************************/
-	if (DLPC350_StartPatLutValidate() < 0)
-	{
-		return;
-	}
-	int i = 0;
-	unsigned int status;
-	bool ready;
-	// 等待LUT校验通过的轮询
-	do
-	{
-		if (DLPC350_CheckPatLutValidate(&ready, &status) < 0)
-		{
-			return;
-		}
-
-		if (ready)
-		{
-			break;
-		}
-		else
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-
-		if (i++ > 5)
-			break;
-	} while (1);
-
-	if (status != 0)
-	{
-		return;
-	}
-
-	if ((status & BIT0) == BIT0)
-	{
-		return;
-	}
-	if ((status & BIT1) == BIT1)
-	{
-		return;
-	}
-	if ((status & BIT2) == BIT2)
-	{
-		return;
-	}
-	if ((status & BIT3) == BIT3)
-	{
-		return;
-	}
-	if ((status & BIT4) == BIT4)
-	{
-		return;
-	}
 	if (DLPC350_PatternDisplay(2) < 0)
 	{
 		return;
@@ -340,14 +341,13 @@ void DLPOperation::ProjectPattern(int exposure_time, int project_period)
 	DLPC350_ClearPatLut();
 	StopProjection();
 	// 写入LUT
-	for (int i = 0; i < 4; i++)
+
+	if (DLPC350_AddToPatLut(0, 0, 8, 7, 0, 0, 1, 0) < 0)
 	{
-		if (DLPC350_AddToPatLut(0, 0, 8, 7, 0, 0, 1, 0) < 0)
-		{
-			std::cout << "error Updating LUT" << std::endl;
-			return;
-		}
+		std::cout << "error Updating LUT" << std::endl;
+		return;
 	}
+
 	// 检查是否勾选sequence
 	if (DLPC350_SetPatternDisplayMode(0) < 0)
 	{
@@ -361,7 +361,7 @@ void DLPOperation::ProjectPattern(int exposure_time, int project_period)
 		return;
 	}
 	// 设置曝光时间和投影周期
-	if (DLPC350_SetExposure_FramePeriod(exposure_time, project_period) < 0)
+	if (DLPC350_SetExposure_FramePeriod(13000, 13000) < 0)
 	{
 		return;
 	}
@@ -403,7 +403,7 @@ void DLPOperation::ProjectPattern(int exposure_time, int project_period)
 		}
 		else
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 
 		if (i++ > 5)
