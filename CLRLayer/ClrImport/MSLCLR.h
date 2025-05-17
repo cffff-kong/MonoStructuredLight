@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include "CLayer/CameraOperation/CameraOperation.h"
 #include "CLayer/DLPOperation/DLPOperation.h"
+#include "CLayer/SSLReconstruction/SSLReconstruction.h"
 #using <System.Drawing.dll>
 using namespace System;
 namespace mslclrimpoort
@@ -33,8 +34,8 @@ namespace mslclrimpoort
 		/// @brief 检查DLP是否连接
 		void CheckDLPIsConnectCLR();
 
-		/// @brief 把相机类的指针传给DLP类
-		void SendCamera2DLPCLR();
+		/// @brief 把相机类的指针传给DLP类 把SSL的指针传给相机类
+		void SendPointerCLR();
 
 		void StartProjectionCLR(int type, int exposure_time, int project_period);
 
@@ -48,5 +49,6 @@ namespace mslclrimpoort
 	private:
 		CameraOperation* m_camera_operation = nullptr; //相机类指针
 		DLPOperation* m_dlp_operation = nullptr; //投影仪类指针
+		SSLReconstruction* m_ssl_reconstruction = nullptr; //SSL重建类指针
 	};
 }

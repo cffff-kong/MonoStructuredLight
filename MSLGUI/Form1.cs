@@ -13,6 +13,7 @@ using mslclrimpoort;
 using System.Reflection;
 using System.Reflection.Emit;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Kitware.VTK;
 namespace MSLGUI
 {
     public partial class Form1 : Form
@@ -20,6 +21,7 @@ namespace MSLGUI
         private MSLCLR mslclr = new MSLCLR();
         int g_is_preview_real_time_diaply = 0;
         int g_exposure_value;
+        RenderWindowControl renderWindowControl;
 
         public Form1()
         {
@@ -30,7 +32,7 @@ namespace MSLGUI
             trackBarExposure.TickFrequency = 1;
             trackBarExposure.SmallChange = 1;
             trackBarExposure.LargeChange = 1;
-            mslclr.SendCamera2DLPCLR(); //传递指针
+            mslclr.SendPointerCLR(); //传递指针
             // 轮询投影仪是否已经连接
             Task.Run(() =>
             {
@@ -147,26 +149,27 @@ namespace MSLGUI
             Thread.Sleep(1000);
             mslclr.CloseCameraCLR();
         }
-     
+
         /// <summary>
         /// 开始投影按钮事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnStartProjection_Click(object sender, EventArgs e)
+        private async void btnStartProjection_Click(object sender, EventArgs e)
         {
             int exposure_time = g_exposure_value;
-            int projection_period;
-            if (exposure_time < 500000)
+            int projection_period = exposure_time < 500000 ? 500000 : exposure_time;
+
+            int projection_type = comboBoxProjectionType.SelectedIndex;
+
+            await Task.Run(() =>
             {
-                projection_period = 500000;
-            }
-            else
-            {
-                projection_period = exposure_time;
-            }
-            mslclr.StartProjectionCLR(comboBoxProjectionType.SelectedIndex, exposure_time, projection_period);
+                mslclr.StartProjectionCLR(projection_type, exposure_time, projection_period);
+            });
+            //上班2
+            Console.WriteLine("por done\n");
         }
+
 
         /// <summary>
         /// 停止投影按钮事件

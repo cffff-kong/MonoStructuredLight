@@ -48,6 +48,11 @@ ClrImport
 )
 
 #链接第三方CSharp库和.Net库
+file(GLOB ACTIVIZ_DLLS "${ACTIVIZ_NET_X64_PATH}/*.dll")
+
+set(MSLGUI_EXTERNAL_REFRENCES 
+    ${ACTIVIZ_DLLS})
+
 set_property(TARGET ${TARGET_NAME} PROPERTY VS_DOTNET_REFERENCES
    "Microsoft.CSharp"
    "Microsoft.VisualBasic"
@@ -69,7 +74,7 @@ set_property(TARGET ${TARGET_NAME} PROPERTY VS_DOTNET_REFERENCES
    "System.ValueTuple"
    "System.IO.Compression"
    "System.IO.Compression.FileSystem"
-    ${FSLEGUI_EXTERNAL_REFRENCES}
+    ${MSLGUI_EXTERNAL_REFRENCES}
 )
 
 # 指定CSharp模块的目标生成平台
@@ -81,7 +86,6 @@ else()
     message(FATAL_ERROR "Generator platform is set to '${CMAKE_GENERATOR_PLATFORM}', which is not supported by managed projects")
 endif()
 
-target_compile_options(${TARGET_NAME} PRIVATE "/platform:${DOTNET_GENERATOR_PLATFORM}")
 
 set_windows_md_flag(${TARGET_NAME})
 

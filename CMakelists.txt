@@ -21,6 +21,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
 
 include(CMake/Function.cmake)
+include(CMake/DotnetPackageConfig.cmake)
 
 # 第三方库的config.cmake  文件
 include(${PROJECT_ROOT_DIR}/CMake/DahengSDKConfig.cmake)
@@ -35,8 +36,10 @@ endif()
 
 include_directories(${PROJECT_ROOT_DIR})
 
+add_subdirectory(CLayer/SSLReconstruction)
 add_subdirectory(CLayer/CameraOperation)
 add_subdirectory(CLayer/DLPOperation)
 add_subdirectory(CLRLayer/ClrImport)
+
 add_subdirectory(MSLGUI)
 

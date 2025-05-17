@@ -6,6 +6,8 @@
 #include <iomanip>
 #include "DahengSDK.h"
 
+#include "CLayer\SSLReconstruction\SSLReconstruction.h"
+
 #ifdef CAMERAOPERATION_EXPORTS
 #define CAMERAOPERATION_API __declspec(dllexport)
 #else
@@ -26,13 +28,22 @@ public:
 	/// @return 
 	bool CloseCamera();
 
+	/// @brief 开始抓图
+	/// @return 
 	bool StartGrabbing();
+
+	/// @brief 从流里取图
+	/// @param  cv::mat类型图像
+	/// @return 
 	bool GetImage(cv::Mat&);
 
+	///  @brief 设置曝光时间
 	void SetExposureTime(int time);
 
+	/// @brief 设置相机外触发
 	void SetExTriggerMode();
 
+	/// @brief 设置相机内触发
 	void SetInTriggerMode();
 
 private:
@@ -42,10 +53,12 @@ private:
 	/// @return
 	bool Img2Opencv(CImageDataPointer& pImageData, cv::Mat& img);
 
+	/// @brief 保存图像
 	void SavePatterns(cv::Mat& img);
 
 public:
 	std::atomic<bool> m_is_ex; // 外触发标识符
+	SSLReconstruction* m_ssl_reconstruction = nullptr;
 private:
 	DahengSDK* m_daheng = nullptr;
 	bool m_is_open = false; // 打开设备标识

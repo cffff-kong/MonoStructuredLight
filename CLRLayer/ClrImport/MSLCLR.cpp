@@ -4,6 +4,7 @@ mslclrimpoort::MSLCLR::MSLCLR()
 {
     m_camera_operation=new CameraOperation();
     m_dlp_operation=new DLPOperation();
+    m_ssl_reconstruction=new SSLReconstruction(4, 2448, 2048, 100, 99, 90);
 }
 
 mslclrimpoort::MSLCLR::~MSLCLR()
@@ -110,9 +111,10 @@ void mslclrimpoort::MSLCLR::CheckDLPIsConnectCLR()
     m_dlp_operation->CheckDLPIsConnect();
 }
 
-void mslclrimpoort::MSLCLR::SendCamera2DLPCLR()
+void mslclrimpoort::MSLCLR::SendPointerCLR()
 {
     m_dlp_operation->m_camera_operation = m_camera_operation;
+    m_camera_operation->m_ssl_reconstruction = m_ssl_reconstruction;
 }
 
 void mslclrimpoort::MSLCLR::StartProjectionCLR(int type, int exposure_time, int project_period)

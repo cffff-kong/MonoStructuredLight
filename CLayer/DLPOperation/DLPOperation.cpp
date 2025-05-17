@@ -224,11 +224,35 @@ void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
 	{
 		return;
 	}
-	delayedCall(15 * project_period / 1000, [this]() {
-		std::cout << "done" << std::endl;
-		m_camera_operation->SetInTriggerMode();
-		});
-	std::cout << "over projection" << std::endl;
+	// 直接阻塞，等到投影结束
+	std::this_thread::sleep_for(std::chrono::milliseconds(15*project_period/1000));
+	m_camera_operation->SetInTriggerMode();
+
+	m_camera_operation->m_ssl_reconstruction->Reconstruction();
+	// 异步等一段时间之后再往下运行，要不会让相机变成内触发
+	/*delayedCall(15 * project_period / 1000, [this]() {
+		try
+		{
+			std::cout << "Lambda start" << std::endl;
+
+			m_camera_operation->SetInTriggerMode();
+			m_camera_operation->m_ssl_reconstruction->Reconstruction();
+
+			std::cout << "done" << std::endl;
+		}
+		catch (const std::exception& ex)
+		{
+			std::cerr << "Exception in lambda: " << ex.what() << std::endl;
+		}
+		catch (...)
+		{
+			std::cerr << "Unknown exception in lambda!" << std::endl;
+		}
+
+		});*/
+
+	//直接运行到这里了，压根就不会等上边
+	std::cout << "----------end to pro----------" << std::endl;
 }
 
 void DLPOperation::ProjectWhite(int exposure_time, int project_period)

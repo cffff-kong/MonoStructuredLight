@@ -29,6 +29,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 ${OpenCV_LIBS}
 CameraOperation
 DLPOperation
+SSLReconstruction
 )
 set_windows_md_flag(${TARGET_NAME})
 
