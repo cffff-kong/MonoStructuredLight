@@ -33,6 +33,10 @@ namespace MSLGUI
             trackBarExposure.SmallChange = 1;
             trackBarExposure.LargeChange = 1;
             mslclr.SendPointerCLR(); //传递指针
+            // 创建点云显示窗口
+            renderWindowControl = new RenderWindowControl();
+            renderWindowControl.Parent = panelCloudPoint;	/* 指定显示空间为panel1 */
+            renderWindowControl.Dock = DockStyle.Fill;	/* 指定显示方式为铺满 */
             // 轮询投影仪是否已经连接
             Task.Run(() =>
             {
@@ -52,6 +56,7 @@ namespace MSLGUI
         private void btnOpenCamera_Click(object sender, EventArgs e)
         {
             mslclr.OpenCameraCLR();
+
         }
 
         /// <summary>
@@ -151,6 +156,39 @@ namespace MSLGUI
         }
 
         /// <summary>
+        /// 在窗口显示点云
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="size"></param>
+        public void showCloudPoint(vtkPoints points, double r = 1.0, double g = 1.0, double b = 1.0, float size = 1f)
+        {
+            vtkPolyData polydata = vtkPolyData.New();
+            polydata.SetPoints(points);
+
+            vtkVertexGlyphFilter glyphFilter = vtkVertexGlyphFilter.New();
+            glyphFilter.SetInputConnection(polydata.GetProducerPort()); ; 
+            glyphFilter.Update();
+
+            vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
+            mapper.SetInputConnection(glyphFilter.GetOutputPort());
+
+            vtkActor actor = vtkActor.New();
+            actor.SetMapper(mapper);
+            actor.GetProperty().SetPointSize(size);
+            actor.GetProperty().SetColor(r, g, b);
+
+            vtkRenderer render = renderWindowControl.RenderWindow.GetRenderers().GetFirstRenderer();
+
+            render.RemoveAllViewProps();  // 清除旧的 actor（如果你只显示一个云）
+            render.AddActor(actor);
+
+            renderWindowControl.RenderWindow.Render();  // 强制刷新
+        }
+
+        /// <summary>
         /// 开始投影按钮事件
         /// </summary>
         /// <param name="sender"></param>
@@ -166,8 +204,20 @@ namespace MSLGUI
             {
                 mslclr.StartProjectionCLR(projection_type, exposure_time, projection_period);
             });
-            //上班2
-            Console.WriteLine("por done\n");
+            Console.WriteLine("project done\n");
+
+            if (projection_type == 0)
+            {
+                // 等待投影完成后显示点云
+                List<mslclrimpoort.Point3f> points = mslclr.ShowCloudPointCLR();
+                vtkPoints vtkpoints = vtkPoints.New();
+                foreach (mslclrimpoort.Point3f pt in points)
+                {
+                    vtkpoints.InsertNextPoint(pt.x, pt.y, pt.z);
+                }
+                showCloudPoint(vtkpoints);
+            }
+           
         }
 
 

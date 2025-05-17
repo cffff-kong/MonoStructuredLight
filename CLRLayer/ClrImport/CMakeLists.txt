@@ -31,6 +31,22 @@ CameraOperation
 DLPOperation
 SSLReconstruction
 )
+# PCL
+#set(PCL_DIR "C:/Program Files/PCL 1.14.0/cmake")
+find_package(PCL REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+#target_include_directories(${TARGET_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+target_link_libraries(${TARGET_NAME} PUBLIC ${PCL_LIBRARIES} )
+
+# 添加 VTK 支持
+find_package(VTK REQUIRED)
+if (VTK_FOUND)
+    include_directories(${VTK_INCLUDE_DIRS})
+    target_link_libraries(${TARGET_NAME} PUBLIC ${VTK_LIBRARIES})
+endif()
+
 set_windows_md_flag(${TARGET_NAME})
 
 target_link_options(${TARGET_NAME}
