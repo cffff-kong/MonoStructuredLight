@@ -20,7 +20,7 @@ namespace MSLGUI
     {
         private MSLCLR mslclr = new MSLCLR();
         int g_is_preview_real_time_diaply = 0;
-        int g_exposure_value;
+        int g_exposure_value=0;
         RenderWindowControl renderWindowControl;
 
         public Form1()
@@ -195,6 +195,12 @@ namespace MSLGUI
         /// <param name="e"></param>
         private async void btnStartProjection_Click(object sender, EventArgs e)
         {
+            if (g_exposure_value==0)
+            {
+                MessageBox.Show("请先设置曝光时间！");
+                return;
+            }
+
             int exposure_time = g_exposure_value;
             int projection_period = exposure_time < 500000 ? 500000 : exposure_time;
 
