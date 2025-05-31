@@ -200,7 +200,6 @@ namespace MSLGUI
                 MessageBox.Show("请先设置曝光时间！");
                 return;
             }
-
             int exposure_time = g_exposure_value;
             int projection_period = exposure_time < 500000 ? 500000 : exposure_time;
 

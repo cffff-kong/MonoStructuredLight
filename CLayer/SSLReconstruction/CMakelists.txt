@@ -1,8 +1,12 @@
 set(TARGET_NAME SSLReconstruction)
-set(TEST_NAME SSLReconstruction)
+set(TEST_NAME SSLReconstructionTest)
 # 配置资源文件
 add_library(${TARGET_NAME} SHARED)
-
+add_executable(${TEST_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp  # 你 EXE 的入口文件
+)
+#EXE 链接到 DLL
+target_link_libraries(${TEST_NAME} PRIVATE ${TARGET_NAME})
 file(GLOB CURRENT_DIR_HEADERS "*.h")
 file(GLOB CURRENT_DIR_SRCS "*.cpp")
 target_sources(${TARGET_NAME} PRIVATE

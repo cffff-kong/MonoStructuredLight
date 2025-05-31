@@ -51,10 +51,13 @@ private:
 	cv::Mat m_k_dlp;  //DLP内参
 	cv::Mat m_rt_cam;  //相机变换矩阵
 	cv::Mat m_rt_dlp;  //DLP变换矩阵
+	vector <cv::Point2f> m_centers; //标识点中心
+
 public:
 	int m_ps_num;
 	vector<cv::Mat> m_imgs;
 	std::queue<cv::Mat> m_img_queue;  //图像队列
+	cv::Mat m_img_points; //标识点图像
 	pcl::PointCloud<pcl::PointXYZ>::Ptr m_cloud;  //点云
 public:
 	/**
@@ -68,8 +71,15 @@ public:
 	 * @param path         图像路径
 	 */
 	SSLReconstruction(int ps_num, int img_width, int img_height, int T1, int T2, int T3);
+	 /**
+	 * @brief 析构函数
+	 */
+	 ~SSLReconstruction();
+	/// @brief 求解标识点像素坐标
+	void FindCentersPixel();
 
-	
+	/// @brief 求解标识点3D坐标
+	void FindCenters3D();
 	/**
 	 * @brief 重建接口
 	 * @return 点云
@@ -128,9 +138,10 @@ private:
 
 	/**
 	 * @brief 多频外差解码接口
+	 * @param filter  是否进行滤波，提取标识点的时候就不要滤波了，保证标识点都能找到
 	 * @return 解码后的图像
 	 */
-	cv::Mat Decode();
+	cv::Mat Decode(bool filter=true);
 
 
 	/**
@@ -141,6 +152,11 @@ private:
 	void CloudPointFilter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered);
 	
 	
+
+	/// @brief 把三维点存个txt看看
+	/// @param points3D 
+	/// @param filename 
+	void SavePointsToTXT(const std::vector<cv::Point3f>& points3D, const std::string& filename);
 
 };
 
