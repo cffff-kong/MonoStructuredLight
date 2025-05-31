@@ -305,15 +305,16 @@ void SSLReconstruction::FindCentersPixel()
 	}
 	// 二值化图像（如果尚未二值化）
 	cv::Mat binaryImage;
-	threshold(m_img_points, binaryImage, 158, 255, cv::THRESH_BINARY);
-
+	threshold(m_img_points, binaryImage, 100, 255, cv::THRESH_BINARY);
+	/*cv::imshow("Binary Image", binaryImage);
+	cv::waitKey(0);*/
 	// 查找连通域
 	cv::Mat labels, stats, centroids;
 	int numLabels = connectedComponentsWithStats(binaryImage, labels, stats, centroids);
-
+	
 	// 设定筛选条件
 	int minArea = 100;			 // 最小面积
-	int maxArea = 1000;			 // 最大面积
+	int maxArea = 3000;			 // 最大面积
 	double minCircularity = 0.8; // 最小圆度
 
 	// 创建一个彩色图像用于可视化
@@ -321,11 +322,16 @@ void SSLReconstruction::FindCentersPixel()
 	cvtColor(binaryImage, outputImage, cv::COLOR_GRAY2BGR);
 
 	vector<cv::Point2f> centers;
+	m_centers.clear();
+
 	// 遍历所有连通域
 	for (int i = 1; i < numLabels; i++)
 	{ // 跳过背景（标签为0）
 		int area = stats.at<int>(i, cv::CC_STAT_AREA);
-
+		if (area < minArea || area > maxArea)
+		{
+			continue;
+		}
 		// 计算连通域的轮廓
 		cv::Mat mask = (labels == i);
 		vector<vector<cv::Point>> contours;
@@ -350,21 +356,27 @@ void SSLReconstruction::FindCentersPixel()
 			cv::Point2f center = ellipse.center; // 椭圆中心点
 			m_centers.push_back(center);
 			// 在图像上标记连通域
-			// cv::Rect boundingBox(stats.at<int>(i, cv::CC_STAT_LEFT),
-			// 					 stats.at<int>(i, cv::CC_STAT_TOP),
-			// 					 stats.at<int>(i, cv::CC_STAT_WIDTH),
-			// 					 stats.at<int>(i, cv::CC_STAT_HEIGHT));
-			// rectangle(outputImage, boundingBox, cv::Scalar(0, 255, 0), 2); // 用绿色矩形标记
+			 cv::Rect boundingBox(stats.at<int>(i, cv::CC_STAT_LEFT),
+			 					 stats.at<int>(i, cv::CC_STAT_TOP),
+			 					 stats.at<int>(i, cv::CC_STAT_WIDTH),
+			 					 stats.at<int>(i, cv::CC_STAT_HEIGHT));
+			 rectangle(outputImage, boundingBox, cv::Scalar(0, 255, 0), 2); // 用绿色矩形标记
 
 			// 在图像上标记椭圆中心点
-			// circle(outputImage, center, 5, cv::Scalar(255, 0, 0), -1); // 用蓝色圆点标记中心
-			// putText(outputImage, "Center", cv::Point(center.x + 10, center.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0), 1);
+			 circle(outputImage, center, 5, cv::Scalar(255, 0, 0), -1); // 用蓝色圆点标记中心
+			 putText(outputImage, "Center", cv::Point(center.x + 10, center.y), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0), 1);
 		}
+		
 	}
+	/*cv::namedWindow("Output Image", cv::WINDOW_NORMAL);
+	cv::imshow("Output Image", outputImage);
+	cv::waitKey(0);*/
 }
 
 void SSLReconstruction::FindCenters3D()
 {
+	m_points3D.clear(); // 清空之前的 3D 点
+	std::cout<< m_points3D.size()<<std::endl;
 	Decode(false);
 	cv::Mat phase_temp;
 	medianBlur(m_phase_abs, phase_temp, 5); // 使用 5×5 的中值滤波
@@ -384,9 +396,6 @@ void SSLReconstruction::FindCenters3D()
 			static_cast<int>(pt.x), // 直接截断小数部分
 			static_cast<int>(pt.y));
 	}
-
-	std::vector<cv::Point3f> points3D; // 存储所有 3D 点
-
 	for (const auto &pt : points2D)
 	{
 		int row = pt.y; // 行坐标（对应图像高度）
@@ -418,13 +427,13 @@ void SSLReconstruction::FindCenters3D()
 			cv::solve(A, b, xyz);
 
 			// 存储 3D 点
-			points3D.emplace_back(
+			m_points3D.emplace_back(
 				xyz.at<float>(0, 0),
 				xyz.at<float>(1, 0),
 				xyz.at<float>(2, 0));
 		}
 	}
-	SavePointsToTXT(points3D, "output_3d_points.txt");
+	//SavePointsToTXT(points3D, "output_3d_points.txt");
 }
 
 void SSLReconstruction::SavePointsToTXT(const std::vector<cv::Point3f> &points3D, const std::string &filename)

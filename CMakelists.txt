@@ -39,6 +39,8 @@ include_directories(${PROJECT_ROOT_DIR})
 add_subdirectory(CLayer/SSLReconstruction)
 add_subdirectory(CLayer/CameraOperation)
 add_subdirectory(CLayer/DLPOperation)
+add_subdirectory(CLayer/PointCloudProcess)
+
 add_subdirectory(CLRLayer/ClrImport)
 
 add_subdirectory(MSLGUI)

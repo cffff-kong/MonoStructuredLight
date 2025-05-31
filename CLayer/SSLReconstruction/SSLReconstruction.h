@@ -59,6 +59,8 @@ public:
 	std::queue<cv::Mat> m_img_queue;  //图像队列
 	cv::Mat m_img_points; //标识点图像
 	pcl::PointCloud<pcl::PointXYZ>::Ptr m_cloud;  //点云
+	std::vector<cv::Point3f> m_points3D; // 标识点世界坐标
+
 public:
 	/**
 	 * @brief 构造函数
