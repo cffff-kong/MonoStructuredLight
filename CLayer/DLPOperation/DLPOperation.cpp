@@ -361,6 +361,13 @@ void DLPOperation::ProjectWhite(int exposure_time, int project_period,bool is_sa
 		std::this_thread::sleep_for(std::chrono::milliseconds(2 * project_period / 1000));
 		m_camera_operation->SetInTriggerMode();
 	}
+	else
+	{
+		if (DLPC350_PatternDisplay(2) < 0)
+		{
+			return;
+		}
+	}
 	
 }
 
