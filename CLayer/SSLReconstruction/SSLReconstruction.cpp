@@ -298,14 +298,15 @@ SSLReconstruction::~SSLReconstruction()
 
 void SSLReconstruction::FindCentersPixel()
 {
-	if (m_img_points.empty())
+	if (m_point_queue.empty())
 	{
 		std::cout << "No points found in the image." << std::endl;
 		return;
 	}
+	cv::Mat img = m_point_queue.front();
 	// 二值化图像（如果尚未二值化）
 	cv::Mat binaryImage;
-	threshold(m_img_points, binaryImage, 100, 255, cv::THRESH_BINARY);
+	threshold(img, binaryImage, 100, 255, cv::THRESH_BINARY);
 	/*cv::imshow("Binary Image", binaryImage);
 	cv::waitKey(0);*/
 	// 查找连通域
@@ -433,6 +434,26 @@ void SSLReconstruction::FindCenters3D()
 				xyz.at<float>(2, 0));
 		}
 	}
+	for (const auto& pt : m_points3D)
+	{
+		pcl::PointXYZL pointsl;
+		pointsl.x = pt.x;
+		pointsl.y = pt.y;
+		pointsl.z = pt.z;
+		pointsl.label = 1;
+		m_cloud_label->push_back(pointsl);
+	}
+	// 获取当前时间
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+
+	// 将当前时间转换为 tm 结构
+	std::tm tm_now = *std::localtime(&now_time);
+
+	// 使用 stringstream 格式化时间字符串
+	std::ostringstream oss;
+	oss << std::put_time(&tm_now, "%Y%m%d_%H%M%S"); // 格式：20250119_143015
+	pcl::io::savePCDFileASCII(oss.str() + ".pcd", *m_cloud_label);
 	//SavePointsToTXT(points3D, "output_3d_points.txt");
 }
 
@@ -455,11 +476,12 @@ void SSLReconstruction::SavePointsToTXT(const std::vector<cv::Point3f> &points3D
 	std::cout << "3D points saved to " << filename << std::endl;
 }
 
-void SSLReconstruction::Reconstruction()
+void SSLReconstruction::Reconstruction(bool is_save)
 {
 	cv::Mat phase = Decode();
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointCloud<pcl::PointXYZL>::Ptr cloud_label(new pcl::PointCloud<pcl::PointXYZL>);
 	cv::Mat A(3, 3, CV_32FC1);
 	cv::Mat b = cv::Mat(3, 1, CV_32FC1);
 	cv::Mat xyz;
@@ -502,9 +524,19 @@ void SSLReconstruction::Reconstruction()
 				points.y = xyz.at<float>(1, 0);
 				points.z = xyz.at<float>(2, 0);
 				cloud->push_back(points);
+
+				pcl::PointXYZL pointsl;
+				pointsl.x = xyz.at<float>(0, 0);
+				pointsl.y = xyz.at<float>(1, 0);
+				pointsl.z = xyz.at<float>(2, 0);
+				pointsl.label =0;
+				cloud_label->push_back(pointsl);
+
 			}
 		}
 	}
+	m_cloud_label=cloud_label;
+
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filterd(new pcl::PointCloud<pcl::PointXYZ>);
 	CloudPointFilter(cloud, cloud_filterd);
 
@@ -513,22 +545,21 @@ void SSLReconstruction::Reconstruction()
 	// voxel_filter.setLeafSize(0.5, 0.5, 0.5);
 	// voxel_filter.filter(*cloud_filterd);
 
-	m_cloud = cloud_filterd;
-	// 获取当前时间
-	auto now = std::chrono::system_clock::now();
-	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+	m_cloud = cloud_filterd;  //直接赋值，不需要清空的操作
 
-	// 将当前时间转换为 tm 结构
-	std::tm tm_now = *std::localtime(&now_time);
-
-	// 使用 stringstream 格式化时间字符串
-	std::ostringstream oss;
-	oss << std::put_time(&tm_now, "%Y%m%d_%H%M%S"); // 格式：20250119_143015
-	pcl::io::savePCDFileASCII(oss.str() + ".pcd", *cloud_filterd);
-	while (!m_img_queue.empty())
+	if (is_save)
 	{
-		m_img_queue.pop();
+		// 获取当前时间
+		auto now = std::chrono::system_clock::now();
+		std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+
+		// 将当前时间转换为 tm 结构
+		std::tm tm_now = *std::localtime(&now_time);
+
+		// 使用 stringstream 格式化时间字符串
+		std::ostringstream oss;
+		oss << std::put_time(&tm_now, "%Y%m%d_%H%M%S"); // 格式：20250119_143015
+		pcl::io::savePCDFileASCII(oss.str() + ".pcd", *m_cloud_label);
 	}
 	cout << "点云生成完成" << endl;
-	// return cloud_filterd;
 }

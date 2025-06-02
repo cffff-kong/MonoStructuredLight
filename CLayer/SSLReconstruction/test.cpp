@@ -152,7 +152,7 @@ int main()
         std::string path = "F:/Repo/MonoStructuredLight/build/x64/bin/Release/data";
         std::string filepath = path + "/" + std::to_string(i);
 
-        ssl.m_img_points = cv::imread(filepath + "/0.BMP", cv::IMREAD_GRAYSCALE);
+        ssl.m_point_queue.push(cv::imread(filepath + "/0.BMP", cv::IMREAD_GRAYSCALE));
         for (int j = 0; j < 12; j++)
         {
             std::string img_path = filepath + "/" + std::to_string(j + 1) + ".BMP";

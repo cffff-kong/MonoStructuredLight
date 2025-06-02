@@ -45,7 +45,7 @@ public
 		void SendPointerCLR();
 
 		/// @brief 开始投影
-		/// @param type 投影条纹类型 0-扫描 1-纯色 2-单帧条纹
+		/// @param type 投影条纹类型 0-单幅扫描 1-拼接扫描 2-纯色 3-单帧条纹
 		/// @param exposure_time 曝光时间
 		/// @param project_period 投影一张图的周期
 		void StartProjectionCLR(int type, int exposure_time, int project_period);

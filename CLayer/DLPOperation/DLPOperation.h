@@ -36,10 +36,18 @@ private:
 	void SetPatternSequence();
 
 	/// @brief 投影四步相移图像
-	void ProjectPhaseShift4Step(int exposure_time, int project_period);
+	/// @param exposure_time 曝光时间
+	/// @param project_period 投影时间
+	/// @param is_reconstruct 是否调用reconstruction函数进行点云生成
+	/// @param is_save 是否保存生成的点云
+	void ProjectPhaseShift4Step(int exposure_time, int project_period,bool is_reconstruct=true,bool is_save=true);
+
+	/// @brief 投影两次相移图像
+	void ProjectPhaseDouble(int exposure_time, int project_period);
 
     /// @brief 投影蓝光
-	void ProjectWhite(int exposure_time, int project_period);
+	/// @param is_save_image 是否把相机设置为外触发，是为了保存全亮图案提取标识点
+	void ProjectWhite(int exposure_time, int project_period,bool is_save_image=false);
 
 	/// @brief 投影一张条纹图
 	void ProjectPattern(int exposure_time, int project_period);

@@ -34,9 +34,11 @@ void DLPOperation::StartProjection(int type, int exposure_time, int project_peri
 		ProjectPhaseShift4Step(exposure_time, project_period);
 		break;
 	case 1:
+		ProjectPhaseDouble(exposure_time, project_period);
+	case 2:
 		ProjectWhite(exposure_time, project_period);
 		break;
-	case 2:
+	case 3:
 		ProjectPattern(exposure_time, project_period);
 		break;
 	}
@@ -103,7 +105,7 @@ void delayedCall(int delayMs, std::function<void()> callback)
 		callback();
 		}).detach();
 }
-void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
+void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period,bool is_reconstruct,bool is_save)
 {
 	DLPC350_ClearPatLut();
 	StopProjection();
@@ -227,35 +229,29 @@ void DLPOperation::ProjectPhaseShift4Step(int exposure_time, int project_period)
 	// 直接阻塞，等到投影结束
 	std::this_thread::sleep_for(std::chrono::milliseconds(15*project_period/1000));
 	m_camera_operation->SetInTriggerMode();
+	if (is_reconstruct)
+	{
+		m_camera_operation->m_ssl_reconstruction->Reconstruction(is_save);
 
-	m_camera_operation->m_ssl_reconstruction->Reconstruction();
-	// 异步等一段时间之后再往下运行，要不会让相机变成内触发
-	/*delayedCall(15 * project_period / 1000, [this]() {
-		try
-		{
-			std::cout << "Lambda start" << std::endl;
-
-			m_camera_operation->SetInTriggerMode();
-			m_camera_operation->m_ssl_reconstruction->Reconstruction();
-
-			std::cout << "done" << std::endl;
-		}
-		catch (const std::exception& ex)
-		{
-			std::cerr << "Exception in lambda: " << ex.what() << std::endl;
-		}
-		catch (...)
-		{
-			std::cerr << "Unknown exception in lambda!" << std::endl;
-		}
-
-		});*/
-
-	//直接运行到这里了，压根就不会等上边
+	}
 	std::cout << "----------end to pro----------" << std::endl;
 }
 
-void DLPOperation::ProjectWhite(int exposure_time, int project_period)
+void DLPOperation::ProjectPhaseDouble(int exposure_time, int project_period)
+{	
+	// 正常曝光投影并重建
+	ProjectPhaseShift4Step(exposure_time, project_period, true,false);
+	// 投影纯色条纹并识别标识点二维坐标
+	ProjectWhite(exposure_time, project_period, true);
+	m_camera_operation->m_ssl_reconstruction->FindCentersPixel();
+	std::cout<<"find 2d centers done!"<<std::endl;
+	// 最低曝光投影，不重建，进行标识点的识别和填充
+	ProjectPhaseShift4Step(10000, 500000, false, false);
+	m_camera_operation->m_ssl_reconstruction->FindCenters3D();
+
+}
+
+void DLPOperation::ProjectWhite(int exposure_time, int project_period,bool is_save_image)
 {
 	DLPC350_ClearPatLut();
 	StopProjection();
@@ -354,10 +350,18 @@ void DLPOperation::ProjectWhite(int exposure_time, int project_period)
 	{
 		return;
 	}
-	if (DLPC350_PatternDisplay(2) < 0)
+	if (is_save_image)
 	{
-		return;
+		m_camera_operation->SetExTriggerMode();
+		if (DLPC350_PatternDisplay(2) < 0)
+		{
+			return;
+		}
+		// 直接阻塞，等到投影结束
+		std::this_thread::sleep_for(std::chrono::milliseconds(2 * project_period / 1000));
+		m_camera_operation->SetInTriggerMode();
 	}
+	
 }
 
 void DLPOperation::ProjectPattern(int exposure_time, int project_period)

@@ -36,6 +36,12 @@ void CameraOperation::SavePatterns(cv::Mat &img)
 	}
 	m_ssl_reconstruction->m_img_queue.push(mono);
 	std::cout << m_ssl_reconstruction->m_img_queue.size() << std::endl;
+
+	if (m_ssl_reconstruction->m_point_queue.size() >= 1)
+	{
+		m_ssl_reconstruction->m_point_queue.pop();
+	}
+	m_ssl_reconstruction->m_point_queue.push(mono);	
 	// // 获取当前时间（精确到毫秒）
 	// auto now = std::chrono::system_clock::now();
 	// auto now_time_t = std::chrono::system_clock::to_time_t(now);

@@ -57,8 +57,9 @@ public:
 	int m_ps_num;
 	vector<cv::Mat> m_imgs;
 	std::queue<cv::Mat> m_img_queue;  //图像队列
-	cv::Mat m_img_points; //标识点图像
+	std::queue<cv::Mat> m_point_queue;  //标识点队列
 	pcl::PointCloud<pcl::PointXYZ>::Ptr m_cloud;  //点云
+	pcl::PointCloud<pcl::PointXYZL>::Ptr m_cloud_label;  //有标签的点云
 	std::vector<cv::Point3f> m_points3D; // 标识点世界坐标
 
 public:
@@ -86,7 +87,7 @@ public:
 	 * @brief 重建接口
 	 * @return 点云
 	 */
-	void Reconstruction();
+	void Reconstruction(bool is_save=true);
 private:
 	/**
 	 * @bnrief 加载图像

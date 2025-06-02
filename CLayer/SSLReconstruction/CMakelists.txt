@@ -27,7 +27,10 @@ target_include_directories(${TARGET_NAME}
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
-
+#daheng
+target_link_libraries(${TARGET_NAME} PUBLIC 
+DahengSDK
+)
 # PCL
 #set(PCL_DIR "C:/Program Files/PCL 1.14.0/cmake")
 find_package(PCL REQUIRED)
