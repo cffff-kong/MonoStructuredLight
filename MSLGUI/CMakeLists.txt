@@ -51,7 +51,10 @@ ClrImport
 file(GLOB ACTIVIZ_DLLS "${ACTIVIZ_NET_X64_PATH}/*.dll")
 
 set(MSLGUI_EXTERNAL_REFRENCES 
-    ${ACTIVIZ_DLLS})
+    ${ACTIVIZ_DLLS}
+    ${WINDOWS_API_CODE_PACK_SHELL_PATH}/Microsoft.WindowsAPICodePack.Shell.dll
+    ${WINDOWS_API_CODE_PACK_CORE_PATH}/Microsoft.WindowsAPICodePack.dll
+    )
 
 set_property(TARGET ${TARGET_NAME} PROPERTY VS_DOTNET_REFERENCES
    "Microsoft.CSharp"

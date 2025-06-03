@@ -14,6 +14,10 @@ using System.Reflection;
 using System.Reflection.Emit;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Kitware.VTK;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs.Controls;
+using System.IO;
+
 namespace MSLGUI
 {
     public partial class Form1 : Form
@@ -22,6 +26,7 @@ namespace MSLGUI
         int g_is_preview_real_time_diaply = 0;
         int g_exposure_value=0;
         RenderWindowControl renderWindowControl;
+        List<string> m_pcd_regisration_files; // 点云配准文件列表
 
         public Form1()
         {
@@ -239,11 +244,65 @@ namespace MSLGUI
         {
 
         }
+        /// <summary>
+        /// 选择需要配准的点云文件夹
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnChoseDirRegisration_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
 
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string selectedPath = dialog.FileName;
+                labelRegisration.Text = selectedPath;
+
+                // 获取所有 .pcd 文件
+                string[] pcdFiles = Directory.GetFiles(selectedPath, "*.pcd");
+                // 按文件名解析为 DateTime 进行排序
+                m_pcd_regisration_files = pcdFiles
+                    .Select(path => new
+                    {
+                        FilePath = path,
+                        FileTime = ParseTimeFromFileName(Path.GetFileNameWithoutExtension(path))
+                    })
+                    .Where(x => x.FileTime != null) // 过滤解析失败的文件
+                    .OrderBy(x => x.FileTime)
+                    .Select(x => x.FilePath)
+                    .ToList();
+                // 示例输出
+                foreach (var file in m_pcd_regisration_files)
+                {
+                    Console.WriteLine(file);
+                    richTextBox1.AppendText("读取到点云" + file + "\n");
+                }
+                int count = m_pcd_regisration_files.Count;
+                richTextBox1.AppendText("共读取到" + count + "个点云文件\n");
+
+            }
+        }
+        // 解析文件名为 DateTime（例如：20250601_165349）
+        private DateTime? ParseTimeFromFileName(string fileName)
+        {
+            if (DateTime.TryParseExact(
+                fileName,
+                "yyyyMMdd_HHmmss",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out DateTime result))
+            {
+                return result;
+            }
+            return null;
+        }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+          
         }
+
+        
     }
 
 }

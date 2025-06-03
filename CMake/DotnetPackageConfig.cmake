@@ -18,3 +18,5 @@ set(NPOI_LIB_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/NPOI.2.5.6/lib/net45
 set(Json_LIB_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/Newtonsoft.Json.13.0.1/lib/net45")
 set(Aliyun_LIB_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/Aliyun.OSS.SDK.2.13.0/lib/net45")
 set(ACTIVIZ_NET_X64_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/Activiz.NET.x64.5.8.0/lib/net20")
+set(WINDOWS_API_CODE_PACK_SHELL_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/WindowsAPICodePack-Shell.1.1.1/lib")
+set(WINDOWS_API_CODE_PACK_CORE_PATH "${PROJECT_ROOT_DIR}/build/DotnetPackages/WindowsAPICodePack-Core.1.1.1/lib")
