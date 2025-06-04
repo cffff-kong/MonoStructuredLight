@@ -1,11 +1,13 @@
 set(TARGET_NAME PointCloudProcess)
+set(TEST_NAME CloudPointTest)
+
 # 配置资源文件
 add_library(${TARGET_NAME} SHARED)
-# add_executable(${TEST_NAME}
-#     ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp  # 你 EXE 的入口文件
-# )
-# #EXE 链接到 DLL
-# target_link_libraries(${TEST_NAME} PRIVATE ${TARGET_NAME})
+add_executable(${TEST_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp  # 你 EXE 的入口文件
+)
+#EXE 链接到 DLL
+target_link_libraries(${TEST_NAME} PRIVATE ${TARGET_NAME})
 file(GLOB CURRENT_DIR_HEADERS "*.h")
 file(GLOB CURRENT_DIR_SRCS "*.cpp")
 target_sources(${TARGET_NAME} PRIVATE
@@ -13,11 +15,11 @@ target_sources(${TARGET_NAME} PRIVATE
     ${CURRENT_DIR_SRCS}
 )
 
-# Opencv
-# set(OpenCV_DIR "D:/opencv4.7/opencv/build/x64/vc16/lib") #OpenCVConfig路径
-# find_package(OpenCV REQUIRED)
-# target_include_directories(${TARGET_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-# target_link_libraries(${TARGET_NAME} PUBLIC ${OpenCV_LIBS})
+#Opencv
+set(OpenCV_DIR "D:/opencv4.7/opencv/build/x64/vc16/lib") #OpenCVConfig路径
+find_package(OpenCV REQUIRED)
+target_include_directories(${TARGET_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${TARGET_NAME} PUBLIC ${OpenCV_LIBS})
 
 
 target_include_directories(${TARGET_NAME}

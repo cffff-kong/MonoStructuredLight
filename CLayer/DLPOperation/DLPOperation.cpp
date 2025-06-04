@@ -248,7 +248,7 @@ void DLPOperation::ProjectPhaseDouble(int exposure_time, int project_period)
 	// 最低曝光投影，不重建，进行标识点的识别和填充
 	ProjectPhaseShift4Step(10000, 500000, false, false);
 	m_camera_operation->m_ssl_reconstruction->FindCenters3D();
-
+	std::cout << "all done" << std::endl;
 }
 
 void DLPOperation::ProjectWhite(int exposure_time, int project_period,bool is_save_image)

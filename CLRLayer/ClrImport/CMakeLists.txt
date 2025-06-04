@@ -30,6 +30,7 @@ ${OpenCV_LIBS}
 CameraOperation
 DLPOperation
 SSLReconstruction
+PointCloudProcess
 )
 # PCL
 #set(PCL_DIR "C:/Program Files/PCL 1.14.0/cmake")
