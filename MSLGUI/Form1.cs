@@ -302,10 +302,35 @@ namespace MSLGUI
           
         }
 
-        private void btnStartRegisrating_Click(object sender, EventArgs e)
+        private async void btnStartRegisrating_Click(object sender, EventArgs e)
         {
-            m_pcd_regisration_files
+            mslclr.InitRegisration();
+            await Task.Run(() =>
+            {
+                int num=1;
+                int total_num= m_pcd_regisration_files.Count;
+
+                foreach (var file in m_pcd_regisration_files)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        richTextBox1.AppendText("[" + num + "/" + total_num + "] 开始处理点云 " + file + "\n");
+                    });
+
+                    List<mslclrimpoort.Point3f> points = mslclr.RegisrationCloudPointCLR(file);
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        richTextBox1.AppendText("[" + num + "/" + total_num + "] 点云 " + file + " 拼接完成\n");
+                    });
+                    num++;
+                }
+            });
+            richTextBox1.AppendText("所有点云都拼接完成！");
+
         }
+
+
     }
 
 }

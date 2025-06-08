@@ -83,15 +83,8 @@ System::Drawing::Bitmap ^ mslclrimpoort::MSLCLR::CVMat2Bitmap(cv::Mat cv_image)
 
     return resultimage;
 }
-System::Collections::Generic::List<mslclrimpoort::Point3f> ^ mslclrimpoort::MSLCLR::PCL2List(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
-{
-    List<Point3f> ^ points = gcnew List<Point3f>();
-    for (const auto &pt : cloud->points)
-    {
-        points->Add(Point3f(pt.x, pt.y, pt.z));
-    }
-    return points;
-}
+
+
 System::Drawing::Bitmap ^ mslclrimpoort::MSLCLR::GetImageCLR()
 {
     cv::Mat image;
@@ -140,12 +133,21 @@ void mslclrimpoort::MSLCLR::StopProjectionCLR()
 
 System::Collections::Generic::List<mslclrimpoort::Point3f>^ mslclrimpoort::MSLCLR::ShowCloudPointCLR()
 {
-    List<Point3f> ^ points=PCL2List(m_ssl_reconstruction->m_cloud);
+    List<Point3f> ^ points=PCL2List<pcl::PointXYZ>(m_ssl_reconstruction->m_cloud);
     return points;
 }
 
 bool mslclrimpoort::MSLCLR::InitRegisration()
 {
-    
-    return false;
+    m_point_cloud_process->m_is_first=true;
+    return  m_point_cloud_process->m_is_first;
+}
+
+System::Collections::Generic::List<mslclrimpoort::Point3f>^ mslclrimpoort::MSLCLR::RegisrationCloudPointCLR(System::String^ path)
+{
+    std::string NativePath = msclr::interop::marshal_as<std::string>(path);
+    pcl::PointCloud<pcl::PointXYZL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZL>);
+    cloud= m_point_cloud_process->RegistrationPointCloud(NativePath);
+    List<Point3f> ^ points= PCL2List<pcl::PointXYZL>(cloud);
+    return points;
 }

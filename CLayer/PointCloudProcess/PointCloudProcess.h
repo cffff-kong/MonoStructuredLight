@@ -34,7 +34,7 @@ public:
     /// @brief 点云配准入口函数
     /// @param path 点云路径，具体到.pcd
     /// @return 旋转之后的点云
-    pcl::PointCloud<pcl::PointXYZL>::Ptr MergePointCloud(std::string path);
+    pcl::PointCloud<pcl::PointXYZL>::Ptr RegistrationPointCloud(std::string path);
 
     private:
     /// @brief Ransac求解点云配准矩阵

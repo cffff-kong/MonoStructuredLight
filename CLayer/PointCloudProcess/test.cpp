@@ -6,11 +6,11 @@ int main(){
     std::string path2="C:/Users/DC Kong/Desktop/test/20250606_220001.pcd";
     std::string path3="C:/Users/DC Kong/Desktop/test/20250606_220228.pcd";
     //std::cout<<"1"<<std::endl;
-    pcp.MergePointCloud(path2);
+    pcp.RegistrationPointCloud(path2);
         std::cout<<"1"<<std::endl;
-        pcp.MergePointCloud(path3);
+        pcp.RegistrationPointCloud(path3);
         std::cout << "1" << std::endl;
-           // pcp.MergePointCloud(path1);
+           // pcp.RegistrationnPointCloud(path1);
 
 
 }

@@ -6,8 +6,11 @@
 #include "CLayer/DLPOperation/DLPOperation.h"
 #include "CLayer/SSLReconstruction/SSLReconstruction.h"
 #include "CLayer/PointCloudProcess/PointCloudProcess.h"
+#include <msclr/marshal_cppstd.h>
 #using < System.Drawing.dll>
 using namespace System;
+using namespace msclr::interop;
+
 namespace mslclrimpoort
 {
 public
@@ -60,6 +63,8 @@ public
 		/// @brief 初始化拼接标识符
 		/// @return 
 		bool InitRegisration();
+
+		System::Collections::Generic::List<mslclrimpoort::Point3f>^ RegisrationCloudPointCLR(System::String^ path);
 	private:
 		/// @brief 把cv::Mat类型的图像转换为Bitmap类型
 		/// @param cv_image 输入图像
@@ -69,8 +74,16 @@ public
         /// @brief 把PCL类型的点云转换为List类型
         /// @param cloud 输入的点云
         /// @return 
-        System::Collections::Generic::List<mslclrimpoort::Point3f>^ PCL2List(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
-
+		template <typename PointT>
+		static System::Collections::Generic::List<Point3f>^ PCL2List(typename pcl::PointCloud<PointT>::Ptr cloud)
+		{
+			auto list = gcnew System::Collections::Generic::List<Point3f>();
+			for (const auto& pt : cloud->points)
+			{
+				list->Add(Point3f(pt.x, pt.y, pt.z));
+			}
+			return list;
+		}
 	private:
 		CameraOperation *m_camera_operation = nullptr;	   // 相机类指针
 		DLPOperation *m_dlp_operation = nullptr;		   // 投影仪类指针

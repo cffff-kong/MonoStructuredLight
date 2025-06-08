@@ -8,7 +8,7 @@ PointCloudProcess::~PointCloudProcess()
 {
 }
 
-pcl::PointCloud<pcl::PointXYZL>::Ptr PointCloudProcess::MergePointCloud(std::string path)
+pcl::PointCloud<pcl::PointXYZL>::Ptr PointCloudProcess::RegistrationPointCloud(std::string path)
 {
 	// 读取点云
 	pcl::PointCloud<pcl::PointXYZL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZL>);
