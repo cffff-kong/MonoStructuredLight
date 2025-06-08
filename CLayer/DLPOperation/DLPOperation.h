@@ -46,7 +46,7 @@ private:
 	void ProjectPhaseDouble(int exposure_time, int project_period);
 
     /// @brief 投影蓝光
-	/// @param is_save_image 是否把相机设置为外触发，是为了保存全亮图案提取标识点
+	/// @param is_save_image 是否把相机设置为外触发，是为了保存全亮图案提取标识点，同时还有设置为once
 	void ProjectWhite(int exposure_time, int project_period,bool is_save_image=false);
 
 	/// @brief 投影一张条纹图

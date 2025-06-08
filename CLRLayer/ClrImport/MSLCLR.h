@@ -5,6 +5,7 @@
 #include "CLayer/CameraOperation/CameraOperation.h"
 #include "CLayer/DLPOperation/DLPOperation.h"
 #include "CLayer/SSLReconstruction/SSLReconstruction.h"
+#include "CLayer/PointCloudProcess/PointCloudProcess.h"
 #using < System.Drawing.dll>
 using namespace System;
 namespace mslclrimpoort
@@ -56,6 +57,9 @@ public
 		/// @brief 显示点云
 		System::Collections::Generic::List<mslclrimpoort::Point3f>^ ShowCloudPointCLR();
 
+		/// @brief 初始化拼接标识符
+		/// @return 
+		bool InitRegisration();
 	private:
 		/// @brief 把cv::Mat类型的图像转换为Bitmap类型
 		/// @param cv_image 输入图像
@@ -71,5 +75,6 @@ public
 		CameraOperation *m_camera_operation = nullptr;	   // 相机类指针
 		DLPOperation *m_dlp_operation = nullptr;		   // 投影仪类指针
 		SSLReconstruction *m_ssl_reconstruction = nullptr; // SSL重建类指针
+		PointCloudProcess *m_point_cloud_process; // 点云处理类指针
 	};
 }

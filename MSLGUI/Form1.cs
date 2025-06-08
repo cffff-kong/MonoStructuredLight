@@ -216,7 +216,7 @@ namespace MSLGUI
             });
             Console.WriteLine("project done\n");
 
-            if (projection_type == 0)
+            if (projection_type == 0|| projection_type == 1)
             {
                 // 等待投影完成后显示点云
                 List<mslclrimpoort.Point3f> points = mslclr.ShowCloudPointCLR();
@@ -302,7 +302,10 @@ namespace MSLGUI
           
         }
 
-        
+        private void btnStartRegisrating_Click(object sender, EventArgs e)
+        {
+            m_pcd_regisration_files
+        }
     }
 
 }

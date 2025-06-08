@@ -35,6 +35,7 @@ void DLPOperation::StartProjection(int type, int exposure_time, int project_peri
 		break;
 	case 1:
 		ProjectPhaseDouble(exposure_time, project_period);
+		break;
 	case 2:
 		ProjectWhite(exposure_time, project_period);
 		break;
@@ -46,6 +47,7 @@ void DLPOperation::StartProjection(int type, int exposure_time, int project_peri
 
 void DLPOperation::StopProjection()
 {
+	m_camera_operation->SetInTriggerMode();
 	int i = 0;
 	unsigned int patMode;
 	DLPC350_PatternDisplay(0);
@@ -253,6 +255,7 @@ void DLPOperation::ProjectPhaseDouble(int exposure_time, int project_period)
 
 void DLPOperation::ProjectWhite(int exposure_time, int project_period,bool is_save_image)
 {
+	std::cout<<"start to project white"<<std::endl;
 	DLPC350_ClearPatLut();
 	StopProjection();
 	// 写入LUT

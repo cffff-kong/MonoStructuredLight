@@ -7,6 +7,7 @@ mslclrimpoort::MSLCLR::MSLCLR()
     m_camera_operation = new CameraOperation();
     m_dlp_operation = new DLPOperation();
     m_ssl_reconstruction = new SSLReconstruction(4, 2448, 2048, 100, 99, 90);
+    m_point_cloud_process = new PointCloudProcess();
 }
 
 mslclrimpoort::MSLCLR::~MSLCLR()
@@ -141,4 +142,10 @@ System::Collections::Generic::List<mslclrimpoort::Point3f>^ mslclrimpoort::MSLCL
 {
     List<Point3f> ^ points=PCL2List(m_ssl_reconstruction->m_cloud);
     return points;
+}
+
+bool mslclrimpoort::MSLCLR::InitRegisration()
+{
+    
+    return false;
 }

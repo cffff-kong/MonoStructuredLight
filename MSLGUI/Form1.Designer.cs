@@ -387,6 +387,7 @@
             this.btnStartRegisrating.TabIndex = 0;
             this.btnStartRegisrating.Text = "开始拼接";
             this.btnStartRegisrating.UseVisualStyleBackColor = true;
+            this.btnStartRegisrating.Click += new System.EventHandler(this.btnStartRegisrating_Click);
             // 
             // btnChoseDirRegisration
             // 

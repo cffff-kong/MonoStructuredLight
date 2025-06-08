@@ -316,7 +316,7 @@ void SSLReconstruction::FindCentersPixel()
 	// 设定筛选条件
 	int minArea = 100;			 // 最小面积
 	int maxArea = 3000;			 // 最大面积
-	double minCircularity = 0.8; // 最小圆度
+	double minCircularity = 0.6; // 最小圆度
 
 	// 创建一个彩色图像用于可视化
 	cv::Mat outputImage;
