@@ -26,6 +26,8 @@ namespace MSLGUI
         int g_is_preview_real_time_diaply = 0;
         int g_exposure_value=0;
         RenderWindowControl renderWindowControl;
+        RenderWindowControl renderWindowRegistration;
+
         List<string> m_pcd_regisration_files; // 点云配准文件列表
 
         public Form1()
@@ -40,8 +42,12 @@ namespace MSLGUI
             mslclr.SendPointerCLR(); //传递指针
             // 创建点云显示窗口
             renderWindowControl = new RenderWindowControl();
-            renderWindowControl.Parent = panelCloudPoint;	/* 指定显示空间为panel1 */
+            renderWindowControl.Parent = panelCloudPoint;	
             renderWindowControl.Dock = DockStyle.Fill;	/* 指定显示方式为铺满 */
+
+            renderWindowRegistration= new RenderWindowControl();
+            renderWindowRegistration.Parent = panel1;
+            renderWindowRegistration.Dock = DockStyle.Fill;
             // 轮询投影仪是否已经连接
             Task.Run(() =>
             {
@@ -301,14 +307,55 @@ namespace MSLGUI
         {
           
         }
+        public void ShowRegisrationCloudPoint(vtkPoints points, int index, float size = 1f)
+        {
+            // 1. 生成不同颜色 (简单示例：用index生成颜色，或者你自己定义颜色数组)
+            double r = (0.3 + 0.7 * ((index * 37) % 100) / 100.0); // 0.3~1.0 变化
+            double g = (0.3 + 0.7 * ((index * 53) % 100) / 100.0);
+            double b = (0.3 + 0.7 * ((index * 97) % 100) / 100.0);
+
+            vtkPolyData polydata = vtkPolyData.New();
+            polydata.SetPoints(points);
+
+            vtkVertexGlyphFilter glyphFilter = vtkVertexGlyphFilter.New();
+            glyphFilter.SetInputConnection(polydata.GetProducerPort());
+            glyphFilter.Update();
+
+            vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
+            mapper.SetInputConnection(glyphFilter.GetOutputPort());
+
+            vtkActor actor = vtkActor.New();
+            actor.SetMapper(mapper);
+            actor.GetProperty().SetPointSize(size);
+            actor.GetProperty().SetColor(r, g, b);
+
+            // 获取注册用的渲染器
+            vtkRenderer render = renderWindowRegistration.RenderWindow.GetRenderers().GetFirstRenderer();
+
+            // 不移除旧的Actor，直接添加新Actor
+            render.AddActor(actor);
+            renderWindowRegistration.RenderWindow.Render(); // 立即刷新，清空显示
+
+        }
 
         private async void btnStartRegisrating_Click(object sender, EventArgs e)
         {
+            if (m_pcd_regisration_files.Count == 0)
+            {
+                MessageBox.Show("请先选择需要配准的点云文件夹！");
+                return;
+            }
+            // 先在UI线程清除所有点云
+            vtkRenderer render = renderWindowRegistration.RenderWindow.GetRenderers().GetFirstRenderer();
+            render.RemoveAllViewProps();
+            renderWindowRegistration.RenderWindow.Render(); // 立即刷新，清空显示
+
             mslclr.InitRegisration();
+
             await Task.Run(() =>
             {
-                int num=1;
-                int total_num= m_pcd_regisration_files.Count;
+                int num = 1;
+                int total_num = m_pcd_regisration_files.Count;
 
                 foreach (var file in m_pcd_regisration_files)
                 {
@@ -323,12 +370,21 @@ namespace MSLGUI
                     {
                         richTextBox1.AppendText("[" + num + "/" + total_num + "] 点云 " + file + " 拼接完成\n");
                     });
+
+                    vtkPoints vtkpoints = vtkPoints.New();
+                    foreach (mslclrimpoort.Point3f pt in points)
+                    {
+                        vtkpoints.InsertNextPoint(pt.x, pt.y, pt.z);
+                    }
+                    // 显示点云，注意这里调用时仍在非UI线程，ShowRegisrationCloudPoint里调用了UI线程Render
+                    this.Invoke((MethodInvoker)(() => ShowRegisrationCloudPoint(vtkpoints, num)));
                     num++;
                 }
             });
-            richTextBox1.AppendText("所有点云都拼接完成！");
 
+            this.Invoke((MethodInvoker)(() => richTextBox1.AppendText("所有点云都拼接完成！\n")));
         }
+
 
 
     }
