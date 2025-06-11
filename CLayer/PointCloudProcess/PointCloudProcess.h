@@ -56,7 +56,7 @@ public:
     /// @param dst 目标点集
     /// @param R 
     /// @param t 
-    void PointCloudProcess::ComputeRigidTransform(const std::vector<cv::Point3f>& src, const std::vector<cv::Point3f>& dst, Eigen::Matrix3d& R, Eigen::Vector3d& t);
+    void ComputeRigidTransform(const std::vector<cv::Point3f>& src, const std::vector<cv::Point3f>& dst, Eigen::Matrix3d& R, Eigen::Vector3d& t);
 
     /// @brief 提取label为1的点
     /// @param  输入的点云

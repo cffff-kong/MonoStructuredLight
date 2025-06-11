@@ -16,7 +16,7 @@ target_sources(${TARGET_NAME} PRIVATE
 )
 
 #Opencv
-set(OpenCV_DIR "D:/opencv4.7/opencv/build/x64/vc16/lib") #OpenCVConfig路径
+set(OpenCV_DIR "F:/opencv4.7/opencv/build/x64/vc16/lib") #OpenCVConfig路径
 find_package(OpenCV REQUIRED)
 target_include_directories(${TARGET_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PUBLIC ${OpenCV_LIBS})
